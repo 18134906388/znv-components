@@ -45,7 +45,7 @@ import flvjs from '../../../video/flv/index.js'
 if (!window.EZUIPlayer) {
   window.EZUIPlayer = EZUIKit.EZUIPlayer
 }
-videojs.options.flash.swf = 'video/video-js.swf'
+videojs.options.flash.swf = '/node_modules/znv-components/video/video-js.swf'
 videojs.addLanguage('zh-CN', {
   ...language.language,
   'Picture-in-Picture': '画中画'

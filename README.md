@@ -21,3 +21,5 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
 import ZnvVideo from 'znv-components'
 Vue.use(ZnvVideo)
 ```
+
+webworkify es6-promise 这两个模块需要手动安装
