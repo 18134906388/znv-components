@@ -41,7 +41,7 @@ import 'video.js/dist/video-js.css'
 import language from '../../../video/hlsVideoLanguage.js'
 import '../../../video/streamedian/streamedian.min.js'
 import EZUIKit from '../../../video/EZUIKit-JavaScript-master/ezuikit.js'
-import flvjs from '../../../video/flv/index.js'
+import flvjs from '../../../video/flv-epubcn/index.js'
 if (!window.EZUIPlayer) {
   window.EZUIPlayer = EZUIKit.EZUIPlayer
 }
@@ -266,9 +266,28 @@ export default {
           let videoElement = document.getElementById(this.vId)
           this.player = flvjs.createPlayer({
             type: 'flv',
-            // isLive: true,
-            // cors: true,
-            url: this.src
+            url: this.src,
+            isLive: true,                
+            enableStashBuffer: false,
+            autoCleanupMaxBackwardDuration: 60,
+            autoCleanupMinBackwardDuration: 30,
+            statisticsInfoReportInterval: 2000,
+            stashInitialSize: 128 * 1024,
+            // 如果是Android浏览器，建议enableDurationMonitor设置为false
+            enableDurationMonitor: true,    // true表示监测当前直播流延时，当发现延时过大时，主动追赶
+            enableVideoFrozenMonitor: true, // 监测视频解码是否停滞（画面卡停），当因为某些原因导致无法解码时，将上报VIDEO_FROZEN事件，收到后建议重拉流
+            videoStateMonitorInterval: 1000, // 多长时间（毫秒）检查一次视频状态（延时、停滞）
+            // 针对手机浏览器上对MSE以及网络连接更加容易不稳定，建议将maxDurationGap设置高一点，比如2.5、3、3.5，否则可能会频繁追赶延时导致画面卡顿
+            maxDurationGap: 1.5,         // 当前播放位置与缓冲区末尾的距离（秒）如果超过这个值，就触发一次追赶，不易过短
+            decreaseDurationStep: 0.4,   // 每次追赶至缓冲区末尾之前的多少秒
+            frozenTimesThreshold: 5,        // 解码停滞次数达到此阈值，上报VIDEO_FROZEN事件。注意如果设置过小的阈值，当推流端关闭摄像头后可能会频繁触发VIDEO_FROZEN事件
+            // webrtc合流未能给cdn推送正确的视频分辨率信息，导致从MetaData/AVCDecoderConfigurationRecord中无法拿到正确的视频分辨率
+            // 在内核低于Chromium 70的浏览器（如360浏览器、搜狗浏览器、PC微信内嵌浏览器等）中
+            // 如果传递不对的视频分辨率，将会导致画面放大显示异常，因此，强行设置一个最大的视频宽高信息，来避免此问题
+            // 如果是Safari浏览器，enableConstVideoViewSize建议设置为false
+            enableConstVideoViewSize: true, 
+            // constVideoViewWidth: 1920,
+            // constVideoViewHeight: 1080,
           })
           this.player.attachMediaElement(videoElement)
           this.player.load() // 加载
