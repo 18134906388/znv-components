@@ -42,10 +42,11 @@ import language from '../../../video/hlsVideoLanguage.js'
 import '../../../video/streamedian/streamedian.min.js'
 import EZUIKit from '../../../video/EZUIKit-JavaScript-master/ezuikit.js'
 import flvjs from '../../../video/flv-epubcn/index.js'
+
 if (!window.EZUIPlayer) {
   window.EZUIPlayer = EZUIKit.EZUIPlayer
 }
-videojs.options.flash.swf = '/node_modules/znv-components/video/video-js.swf'
+videojs.options.flash.swf = 'video-js.swf'
 videojs.addLanguage('zh-CN', {
   ...language.language,
   'Picture-in-Picture': '画中画'
@@ -261,12 +262,18 @@ export default {
     },
     // 初始化flv视频流
     initFlv() {
+      let enableDurationMonitor = true
+      console.log(this.getDeviceKind())
+      if (this.getDeviceKind() === 'mobile') {
+        enableDurationMonitor = false
+      }
       this.$nextTick(() => {
         if (flvjs.isSupported() && this.src) {
           let videoElement = document.getElementById(this.vId)
           this.player = flvjs.createPlayer({
             type: 'flv',
-            url: this.src,
+            url: this.src
+          }, {
             isLive: true,                
             enableStashBuffer: false,
             autoCleanupMaxBackwardDuration: 60,
@@ -274,7 +281,7 @@ export default {
             statisticsInfoReportInterval: 2000,
             stashInitialSize: 128 * 1024,
             // 如果是Android浏览器，建议enableDurationMonitor设置为false
-            enableDurationMonitor: true,    // true表示监测当前直播流延时，当发现延时过大时，主动追赶
+            enableDurationMonitor: enableDurationMonitor,    // true表示监测当前直播流延时，当发现延时过大时，主动追赶
             enableVideoFrozenMonitor: true, // 监测视频解码是否停滞（画面卡停），当因为某些原因导致无法解码时，将上报VIDEO_FROZEN事件，收到后建议重拉流
             videoStateMonitorInterval: 1000, // 多长时间（毫秒）检查一次视频状态（延时、停滞）
             // 针对手机浏览器上对MSE以及网络连接更加容易不稳定，建议将maxDurationGap设置高一点，比如2.5、3、3.5，否则可能会频繁追赶延时导致画面卡顿
@@ -296,6 +303,14 @@ export default {
           this.player.znvVideoPlayerType = 'flvjs'
         }
       })
+    },
+    // pc & mobile
+    getDeviceKind () {
+      if (/(iPhone|iPad|iPod|iOS|Android)/i.test(navigator.userAgent)) {
+        return 'mobile'
+      } else {
+        return 'pc'
+      }
     },
     // 销毁HLS视频流以及对应播放器实例
     destroyHls () {
