@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="video-box" v-for="(item, index) in videoList" :key="index">
-      <znv-video :src="item.src" :type="item.type" :vId="item.vId"></znv-video>
+      <znv-video :src="item.src" :type="item.type" :vId="item.vId" :playerType='item.playerType'></znv-video>
     </div>
   </div>
 </template>
@@ -14,21 +14,10 @@ export default {
   data () {
     return {
       videoList: [{
-        src: 'http://10.45.157.180:88/live?app=znv&stream=live',
-        type: 'flv',
-        vId: 'test1'
-      }, {
-        src: 'http://10.45.157.180:88/live?app=znv&stream=live',
-        type: 'flv',
-        vId: 'test2'
-      }, {
-        src: 'http://10.45.157.180:88/live?app=znv&stream=live',
-        type: 'flv',
-        vId: 'test3'
-      }, {
-        src: 'rtmp://10.45.157.180/znv/live',
+        src: 'rtmp://58.200.131.2:1935/livetv/hunantv',
         type: 'rtmp',
-        vId: 'test4'
+        vId: 'test4',
+        playerType: 'EZUIPlayer'
       }]
     }
   }

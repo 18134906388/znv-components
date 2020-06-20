@@ -42,6 +42,7 @@ import language from '../../../video/hlsVideoLanguage.js'
 import '../../../video/streamedian/streamedian.min.js'
 import EZUIKit from '../../../video/EZUIKit-JavaScript-master/ezuikit.js'
 import flvjs from '../../../video/flv-epubcn/index.js'
+import $ from 'jquery'
 
 if (!window.EZUIPlayer) {
   window.EZUIPlayer = EZUIKit.EZUIPlayer
