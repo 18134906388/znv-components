@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "jquery": "^3.5.1",
+    "supper-tools": "^1.0.2",
     "vue": "^2.5.11",
     "webworkify": "^1.5.0"
   },

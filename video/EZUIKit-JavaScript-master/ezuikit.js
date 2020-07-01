@@ -49,17 +49,29 @@
 
 
   // var Domain = 'https://open.ys7.com';
-  var Domain = window.location.origin;
+  // var Domain = window.location.origin;
+  // var logDomain = 'https://log.ys7.com/statistics.do';
+
+  // var jqueryJS = Domain +  '/video/EZUIKit-JavaScript-master/js/jquery.min.js';
+  // var ckplayerJS = Domain +  '/video/EZUIKit-JavaScript-master/js/ckplayer/ckplayer.js';
+  // var ckplayerSWF = Domain +  '/video/EZUIKit-JavaScript-master/js/ckplayer/ckplayer.swf';
+  // var m3u8SWF = Domain +  '/video/EZUIKit-JavaScript-master/js/ckplayer/m3u8.swf';
+  // var flv_js = Domain +  '/video/EZUIKit-JavaScript-master/js/flv.min.js';
+  // var hlsJS = Domain +  '/video/EZUIKit-JavaScript-master/js/hls.min.js';
+  // var mpegJS = Domain +  '/video/EZUIKit-JavaScript-master/js/jsmpeg.min.js';
+  // var wav = Domain +  '/video/EZUIKit-JavaScript-master/js/wav-audio-encoder.js';
+
+  var Domain = 'https://open.ys7.com';
   var logDomain = 'https://log.ys7.com/statistics.do';
 
-  var jqueryJS = Domain +  '/video/EZUIKit-JavaScript-master/js/jquery.min.js';
-  var ckplayerJS = Domain +  '/video/EZUIKit-JavaScript-master/js/ckplayer/ckplayer.js';
-  var ckplayerSWF = Domain +  '/video/EZUIKit-JavaScript-master/js/ckplayer/ckplayer.swf';
-  var m3u8SWF = Domain +  '/video/EZUIKit-JavaScript-master/js/ckplayer/m3u8.swf';
-  var flv_js = Domain +  '/video/EZUIKit-JavaScript-master/js/flv.min.js';
-  var hlsJS = Domain +  '/video/EZUIKit-JavaScript-master/js/hls.min.js';
-  var mpegJS = Domain +  '/video/EZUIKit-JavaScript-master/js/jsmpeg.min.js';
-  var wav = Domain +  '/video/EZUIKit-JavaScript-master/js/wav-audio-encoder.js';
+  var jqueryJS = Domain + '/sdk/js/2.0/js/jquery.min.js';
+  var ckplayerJS = Domain + '/sdk/js/2.0/js/ckplayer/ckplayer.js';
+  var ckplayerSWF = Domain + '/sdk/js/2.0/js/ckplayer/ckplayer.swf';
+  var m3u8SWF = Domain + '/sdk/js/2.0/js/ckplayer/m3u8.swf';
+  var flv_js = Domain + '/sdk/js/2.0/js/flv.min.js';
+  var hlsJS = Domain + '/sdk/js/2.0/js/hls.min.js';
+  var mpegJS = Domain + '/sdk/js/2.0/js/jsmpeg.min.js';
+  var wav = Domain + '/sdk/js/2.0/js/wav-audio-encoder.js';
 
 
   // 当前页面是否是https协议
