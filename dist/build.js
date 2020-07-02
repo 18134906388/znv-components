@@ -4314,7 +4314,7 @@ module.exports = function normalizeComponent (
   },
   mounted: function mounted() {
     var queryObj = __WEBPACK_IMPORTED_MODULE_1_supper_tools___default.a.url2json(location.href);
-    queryObj.src && (this.item.src = queryObj.src);
+    queryObj.src && (this.item.src = unescape(queryObj.src));
     queryObj.type && (this.item.type = queryObj.type);
     queryObj.vId && (this.item.vId = queryObj.vId);
     queryObj.playerType && t(his.item.playerType = queryObj.playerType);
@@ -66997,7 +66997,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(79);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_3ab97ee6_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(290);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_d8691204_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(290);
 function injectStyle (ssrContext) {
   __webpack_require__(129)
 }
@@ -67017,7 +67017,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_App_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_3ab97ee6_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_d8691204_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -67038,7 +67038,7 @@ var content = __webpack_require__(130);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(49)("dbf1ddbc", content, true, {});
+var update = __webpack_require__(49)("345eb64a", content, true, {});
 
 /***/ }),
 /* 130 */

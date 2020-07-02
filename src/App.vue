@@ -22,7 +22,7 @@ export default {
   },
   mounted() {
     let queryObj = st.url2json(location.href)
-    queryObj.src && (this.item.src = queryObj.src)
+    queryObj.src && (this.item.src = unescape(queryObj.src))
     queryObj.type && (this.item.type = queryObj.type)
     queryObj.vId && (this.item.vId = queryObj.vId)
     queryObj.playerType && t(his.item.playerType = queryObj.playerType)
