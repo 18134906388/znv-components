@@ -219,6 +219,7 @@ export default {
     },
     // 初始化RTSP视频流
     initRtsp () {
+      let self = this
       this.$nextTick(() => {
         if (window.Streamedian && this.src) {
           let errHandler = function (err) {
