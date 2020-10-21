@@ -92,6 +92,11 @@ export default {
       required: false,
       default: 'videoJs',
     },
+    rtspWebSocketUrl: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
   mounted() {
     if (this.type === 'hls') {
@@ -213,23 +218,36 @@ export default {
       }
     },
     // 初始化RTSP视频流
-    initRtsp() {
+    initRtsp () {
       this.$nextTick(() => {
         if (window.Streamedian && this.src) {
           let errHandler = function (err) {
             console.log(err.message)
           }
-          let playerOptions = {
-            socket: sysConfig.rtspWebSocketUrl,
-            redirectNativeMediaErrors: true,
-            bufferDuration: 30,
-            errorHandler: errHandler,
+          let stuHandler = function (currentProxy, message) {
+            if (message === 9000003) {
+              self.reconnectWs()
+            }
           }
-          this.player = window.Streamedian.player(this.vId, playerOptions)
+          let playerOptions = {
+            socket: this.rtspWebSocketUrl,
+            redirectNativeMediaErrors: true,
+            bufferDuration: 5,
+            errorHandler: errHandler,
+            statuHandler: stuHandler
+          }
+          this.player = window.Streamedian.player(
+            this.vId,
+            playerOptions
+          )
           this.player.znvVideoSrcType = 'rtsp'
           this.player.znvVideoPlayerType = 'streamedian'
         }
       })
+    },
+    reconnectWs() {
+      this.destroyRtsp()
+      this.initRtsp()
     },
     // 初始化RTMP视频流
     initRtmp() {
@@ -333,6 +351,8 @@ export default {
         this.player.muted = _muted
       } else if (this.player.znvVideoPlayerType === 'EZUIPlayer') {
         this.player.video.muted = _muted
+      } else if (this.player.znvVideoPlayerType === 'streamedian') {
+        this.player.player.muted = _muted
       }
     },
     // 全屏
@@ -350,7 +370,9 @@ export default {
           this.player.video.requestFullscreen()
         } else if (this.player.znvVideoSrcType === 'rtmp') {
           this.player.fullScreen()
-        }
+        } else if (this.player.znvVideoPlayerType === 'streamedian') {
+        this.player.player.requestFullscreen()
+      }
       }
     },
     // 获取当前帧
