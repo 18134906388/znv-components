@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <znv-video v-if='item.src' :src="item.src" :type="item.type" :vId="item.vId" :playerType='item.playerType' :rtspWebSocketUrl='item.rtspWebSocketUrl'></znv-video>
+    <znv-video v-if='item.src' :src="item.src" :type="item.type" :playerType='item.playerType' :ws='item.ws'></znv-video>
   </div>
 </template>
 
@@ -15,9 +15,8 @@ export default {
       item: {
         src: '',
         type: '',
-        vId: 'znv' + +new Date(),
         playerType: 'videoJs',
-        rtspWebSocketUrl: ''
+        ws: ''
       }
     }
   },
@@ -25,9 +24,8 @@ export default {
     let queryObj = st.url2json(location.href)
     queryObj.src && (this.item.src = unescape(queryObj.src))
     queryObj.type && (this.item.type = queryObj.type)
-    queryObj.vId && (this.item.vId = queryObj.vId)
     queryObj.playerType && (this.item.playerType = queryObj.playerType)
-    queryObj.rtspWebSocketUrl && (this.item.rtspWebSocketUrl = unescape(queryObj.rtspWebSocketUrl))
+    queryObj.ws && (this.item.ws = unescape(queryObj.ws))
   }
 }
 </script>

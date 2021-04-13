@@ -1,0 +1,51 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "69147026",
+      "name": "视频组件_还原",
+      "font_class": "shipinzujian_huanyuan",
+      "unicode": "e711",
+      "unicode_decimal": 59153
+    },
+    {
+      "icon_id": "69147027",
+      "name": "视频组件_全屏",
+      "font_class": "shipinzujian_quanping",
+      "unicode": "e712",
+      "unicode_decimal": 59154
+    },
+    {
+      "icon_id": "69147028",
+      "name": "视频组件_静音",
+      "font_class": "shipinzujian_jingyin",
+      "unicode": "e713",
+      "unicode_decimal": 59155
+    },
+    {
+      "icon_id": "69147029",
+      "name": "视频组件_刷新",
+      "font_class": "shipinzujian_shuaxin",
+      "unicode": "e714",
+      "unicode_decimal": 59156
+    },
+    {
+      "icon_id": "69147030",
+      "name": "视频组件_放大",
+      "font_class": "shipinzujian_fangda",
+      "unicode": "e715",
+      "unicode_decimal": 59157
+    },
+    {
+      "icon_id": "69147031",
+      "name": "视频组件_放音",
+      "font_class": "shipinzujian_fangyin",
+      "unicode": "e716",
+      "unicode_decimal": 59158
+    }
+  ]
+}

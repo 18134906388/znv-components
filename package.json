@@ -1,7 +1,7 @@
 {
   "name": "znv-components",
   "description": "A Vue.js project",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "author": "lizhiwei <0049003294@znv.com>",
   "license": "MIT",
   "private": false,
