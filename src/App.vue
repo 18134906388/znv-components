@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <znv-video v-if='item.src' :src="item.src" :type="item.type" :vId="item.vId" :playerType='item.playerType' :ref="item.vId"></znv-video>
+    <znv-video :src="item.src" :type="item.type" :ref="item.vId"></znv-video>
   </div>
 </template>
 
@@ -13,22 +13,10 @@ export default {
   data () {
     return {
       item: {
-        src: 'http://img.ksbbs.com/asset/Mon_1704/15868902d399b87.flv',
-        type: 'flv',
-        vId: 'znv' + +new Date(),
-        playerType: 'videoJs'
+        src: 'https://flvopen.ys7.com:9188/openlive/c447724d034446ce8f40f02a661d8eaf.flv',
+        type: 'flv'
       }
     }
-  },
-  mounted() {
-    // let queryObj = st.url2json(location.href)
-    // queryObj.src && (this.item.src = queryObj.src)
-    // queryObj.type && (this.item.type = queryObj.type)
-    // queryObj.vId && (this.item.vId = queryObj.vId)
-    // queryObj.playerType && t(his.item.playerType = queryObj.playerType)
-    setTimeout(() => {
-      console.log(this.$refs[this.item.vId].getCurrentFrame())
-    }, 5000);
   }
 }
 </script>
