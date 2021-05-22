@@ -1,53 +1,58 @@
 <template>
   <div id="app">
-    <znv-video v-if='item.src' :src="item.src" :type="item.type" :playerType='item.playerType' :ws='item.ws'></znv-video>
+    <znv-video
+      v-if="item.src"
+      :src="item.src"
+      :type="item.type"
+      :playerType="item.playerType"
+      :ws="item.ws"
+    ></znv-video>
   </div>
 </template>
 
 <script>
+// hls点播测试地址https://yunqivedio.alicdn.com/2017yq/v2/0x0/96d79d3f5400514a6883869399708e11/96d79d3f5400514a6883869399708e11.m3u8
+// hls直播测试地址https://hls01open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.m3u8
+// flv点播测试地址https://mister-ben.github.io/videojs-flvjs/bbb.flv
+// flv直播测试地址https://flvopen.ys7.com:9188/openlive/376d82d20a6c479b829222acca274b61.hd.flv
 import ZnvVideo from './components/znvVideo/ZnvVideo'
 import st from 'supper-tools'
 export default {
   name: 'app',
   components: { ZnvVideo },
-  data () {
+  data() {
     return {
       item: {
-        src: '',
-        type: '',
-        playerType: 'videoJs',
-        ws: ''
-      }
+        src:
+          'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
+        type: 'rtsp',
+        ws: 'ws://10.45.154.187:8060/ws',
+      },
     }
   },
   mounted() {
-    let queryObj = st.url2json(location.href)
-    queryObj.src && (this.item.src = unescape(queryObj.src))
-    queryObj.type && (this.item.type = queryObj.type)
-    queryObj.playerType && (this.item.playerType = queryObj.playerType)
-    queryObj.ws && (this.item.ws = unescape(queryObj.ws))
-  }
+    // let queryObj = st.url2json(location.href)
+    // queryObj.src && (this.item.src = unescape(queryObj.src))
+    // queryObj.type && (this.item.type = queryObj.type)
+    // queryObj.playerType && (this.item.playerType = queryObj.playerType)
+    // queryObj.ws && (this.item.ws = unescape(queryObj.ws))
+  },
 }
 </script>
 
 <style lang="scss">
-html,body{
+html,
+body {
   margin: 0;
   padding: 0;
   font-size: 10px;
-  // overflow: hidden;
-  font-family: "Microsoft YaHei";
+  font-family: 'Microsoft YaHei';
   width: 100%;
-  height: 100%;
-  color: #E5EDFF;
+  height: 100vh;
+  color: #e5edff;
 }
 #app {
   width: 100%;
   height: 100%;
-  .video-box {
-    width: 100%;
-    height: 100%;
-    display: inline-block;
-  }
 }
 </style>
