@@ -14,21 +14,11 @@
 </template>
 
 <script>
-/**
- * 流媒体播放器2.0
- * @module 组件存放位置
- * @desc 同时支持rtsp、flv和hls三种流媒体，相比1.0去掉的rtmp的支持，同时使用video.js统一UI和API,代码更加精简，更容易集成以及使用。
- * @author 李志伟0049003294
- * @date 2021年05月20日10:22:43
- * @param {String} [src]    - 流媒体链接 必传
- * @param {String} [type]    - 流媒体类型 必传
- */
 
 export default {
   name: 'ZnvVideo',
   data() {
     return {
-      vId: '',
       options: {
         techOrder: ['html5', 'Flvjs', 'Streamedianjs'],
         autoplay: true,
@@ -50,6 +40,11 @@ export default {
     }
   },
   props: {
+    vId: {
+      type: String,
+      required: true,
+      default: '',
+    },
     src: {
       type: String,
       required: true,
@@ -66,9 +61,6 @@ export default {
       default: '',
     },
   },
-  created() {
-    this.vId = this.createUUID()
-  },
   mounted() {
     this.player = videojs('znv-video-' + this.vId, this.options)
     this.setSrc()
@@ -79,21 +71,6 @@ export default {
     },
   },
   methods: {
-    createUUID() {
-      let d = new Date().getTime()
-      if (window.performance && typeof window.performance.now === 'function') {
-        d += performance.now() // use high-precision timer if available
-      }
-      let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-        /[xy]/g,
-        function (c) {
-          let r = (d + Math.random() * 16) % 16 | 0
-          d = Math.floor(d / 16)
-          return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16)
-        }
-      )
-      return uuid
-    },
     setSrc() {
       if (this.type === 'hls') {
         this.initHls()

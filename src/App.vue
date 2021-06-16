@@ -6,6 +6,7 @@
       :type="item.type"
       :playerType="item.playerType"
       :ws="item.ws"
+      :cameraIndexCode='item.cameraIndexCode'
     ></znv-video>
   </div>
 </template>
@@ -15,7 +16,7 @@
 // hls直播测试地址https://hls01open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.m3u8
 // flv点播测试地址https://mister-ben.github.io/videojs-flvjs/bbb.flv
 // flv直播测试地址https://flvopen.ys7.com:9188/openlive/376d82d20a6c479b829222acca274b61.hd.flv
-import ZnvVideo from './components/znvVideo/ZnvVideo'
+import ZnvVideo from './components/znvVideo/Video'
 import st from 'supper-tools'
 export default {
   name: 'app',
@@ -25,8 +26,9 @@ export default {
       item: {
         src:
           'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
-        type: 'rtsp',
+        type: 'hik',
         ws: 'ws://10.45.154.187:8060/ws',
+        cameraIndexCode: '123'
       },
     }
   },
