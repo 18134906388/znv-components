@@ -78,6 +78,8 @@ export default {
         this.initRtsp()
       } else if (this.type === 'flv') {
         this.initFlv()
+      } else if (this.type === 'mp4') {
+        this.initMp4()
       }
     },
     initHls() {
@@ -101,6 +103,11 @@ export default {
         type: 'video/x-flv',
       })
     },
+    initMp4() {
+      this.player.src({
+        src: this.src
+      })
+    }
   },
   beforeDestroy() {
     if (this.player) {

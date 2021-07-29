@@ -60,38 +60,11 @@
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports) {
 
 /*
@@ -173,7 +146,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -192,7 +165,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(14)
+var listToStyles = __webpack_require__(16)
 
 /*
 type StyleObject = {
@@ -401,7 +374,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -510,13 +483,41 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
 /* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_znvVideo_ZnvVideo__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_supper_tools__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_znvVideo_Video__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_supper_tools__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_supper_tools___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_supper_tools__);
+//
 //
 //
 //
@@ -538,13 +539,14 @@ module.exports = function normalizeComponent (
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   name: 'app',
-  components: { ZnvVideo: __WEBPACK_IMPORTED_MODULE_0__components_znvVideo_ZnvVideo__["a" /* default */] },
+  components: { ZnvVideo: __WEBPACK_IMPORTED_MODULE_0__components_znvVideo_Video__["a" /* default */] },
   data: function data() {
     return {
       item: {
         src: 'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
-        type: 'rtsp',
-        ws: 'ws://10.45.154.187:8060/ws'
+        type: 'hik',
+        ws: 'ws://10.45.154.187:8060/ws',
+        cameraIndexCode: '37035100001310666505'
       }
     };
   },
@@ -559,6 +561,87 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 /* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ZnvVideo__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__HikVideo__ = __webpack_require__(24);
+//
+//
+//
+//
+//
+//
+//
+
+/**
+ * 流媒体播放器2.0
+ * @module 组件存放位置
+ * @desc 同时支持rtsp、flv和hls三种流媒体，相比1.0去掉的rtmp的支持，同时使用video.js统一UI和API,代码更加精简，更容易集成以及使用。支持hik（海康平台对接视频）
+ * @author 李志伟0049003294
+ * @date 2021年05月20日10:22:43
+ * @param {String} [src]    - 流媒体链接 必传
+ * @param {String} [type]    - 流媒体类型 必传
+ */
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  name: 'Video',
+  components: {
+    ZnvVideo: __WEBPACK_IMPORTED_MODULE_0__ZnvVideo__["a" /* default */],
+    HikVideo: __WEBPACK_IMPORTED_MODULE_1__HikVideo__["a" /* default */]
+  },
+  data: function data() {
+    return {
+      vId: ''
+    };
+  },
+
+  props: {
+    src: {
+      type: String,
+      required: true,
+      default: ''
+    },
+    type: {
+      type: String,
+      required: true,
+      default: ''
+    },
+    ws: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    cameraIndexCode: {
+      type: String,
+      required: false,
+      default: ""
+    }
+  },
+  created: function created() {
+    this.vId = this.createUUID();
+  },
+
+  methods: {
+    createUUID: function createUUID() {
+      var d = new Date().getTime();
+      if (window.performance && typeof window.performance.now === 'function') {
+        d += performance.now(); // use high-precision timer if available
+      }
+      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
+      });
+      return uuid;
+    }
+  }
+});
+
+/***/ }),
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -578,21 +661,11 @@ module.exports = function normalizeComponent (
 //
 //
 
-/**
- * 流媒体播放器2.0
- * @module 组件存放位置
- * @desc 同时支持rtsp、flv和hls三种流媒体，相比1.0去掉的rtmp的支持，同时使用video.js统一UI和API,代码更加精简，更容易集成以及使用。
- * @author 李志伟0049003294
- * @date 2021年05月20日10:22:43
- * @param {String} [src]    - 流媒体链接 必传
- * @param {String} [type]    - 流媒体类型 必传
- */
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   name: 'ZnvVideo',
   data: function data() {
     return {
-      vId: '',
       options: {
         techOrder: ['html5', 'Flvjs', 'Streamedianjs'],
         autoplay: true,
@@ -615,6 +688,11 @@ module.exports = function normalizeComponent (
   },
 
   props: {
+    vId: {
+      type: String,
+      required: true,
+      default: ''
+    },
     src: {
       type: String,
       required: true,
@@ -631,9 +709,6 @@ module.exports = function normalizeComponent (
       default: ''
     }
   },
-  created: function created() {
-    this.vId = this.createUUID();
-  },
   mounted: function mounted() {
     this.player = videojs('znv-video-' + this.vId, this.options);
     this.setSrc();
@@ -645,18 +720,6 @@ module.exports = function normalizeComponent (
     }
   },
   methods: {
-    createUUID: function createUUID() {
-      var d = new Date().getTime();
-      if (window.performance && typeof window.performance.now === 'function') {
-        d += performance.now(); // use high-precision timer if available
-      }
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
-      });
-      return uuid;
-    },
     setSrc: function setSrc() {
       if (this.type === 'hls') {
         this.initHls();
@@ -697,13 +760,237 @@ module.exports = function normalizeComponent (
 });
 
 /***/ }),
-/* 6 */
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify__);
+
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  name: "HikVideo",
+  props: {
+    vId: {
+      type: String,
+      required: true,
+      default: ""
+    },
+    cameraIndexCode: {
+      type: String,
+      required: false,
+      default: ""
+    }
+  },
+  data: function data() {
+    return {
+      oWebControl: null,
+      initCount: 0,
+      pubKey: ""
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$nextTick(function () {
+      _this.initPlugin();
+    });
+  },
+
+  methods: {
+    initPlugin: function (_initPlugin) {
+      function initPlugin() {
+        return _initPlugin.apply(this, arguments);
+      }
+
+      initPlugin.toString = function () {
+        return _initPlugin.toString();
+      };
+
+      return initPlugin;
+    }(function () {
+      var self = this;
+      self.oWebControl = new WebControl({
+        szPluginContainer: self.vId, // 指定容器id
+        iServicePortStart: 15900, // 指定起止端口号，建议使用该值
+        iServicePortEnd: 15909,
+        szClassId: "23BF3B0A-2C56-4D97-9C03-0CB103AA8F11", // 用于IE10使用ActiveX的clsid
+        cbConnectSuccess: function cbConnectSuccess() {
+          // 创建WebControl实例成功
+          self.oWebControl.JS_StartService("window", {
+            // WebControl实例创建成功后需要启动服务
+            dllPath: "./VideoPluginConnect.dll" // 值"./VideoPluginConnect.dll"写死
+          }).then(function () {
+            // 启动插件服务成功
+            self.oWebControl.JS_SetWindowControlCallback({
+              // 设置消息回调
+              cbIntegrationCallBack: self.cbIntegrationCallBack
+            });
+
+            self.oWebControl.JS_CreateWnd(self.vId, 1000, 600).then(function () {
+              //JS_CreateWnd创建视频播放窗口，宽高可设定
+              self.init(); // 创建播放实例成功后初始化
+            });
+          }, function () {
+            console.log("启动插件服务失败");
+          });
+        },
+        cbConnectError: function cbConnectError() {
+          // 创建WebControl实例失败
+          self.oWebControl = null;
+          console.log("插件未启动，正在尝试启动，请稍候...");
+          WebControl.JS_WakeUp("VideoWebPlugin://"); // 程序未启动时执行error函数，采用wakeup来启动程序
+          self.initCount++;
+          if (self.initCount < 3) {
+            setTimeout(function () {
+              initPlugin();
+            }, 3000);
+          } else {
+            console.log("插件启动失败，请检查插件是否安装！");
+          }
+        },
+        cbConnectClose: function cbConnectClose(bNormalClose) {
+          // 异常断开：bNormalClose = false
+          // JS_Disconnect正常断开：bNormalClose = true
+          console.log("cbConnectClose");
+          self.oWebControl = null;
+        }
+      });
+    }),
+    init: function init() {
+      var self = this;
+      self.getPubKey(function () {
+        ////////////////////////////////// 请自行修改以下变量值	////////////////////////////////////
+        var appkey = "23692284"; //综合安防管理平台提供的appkey，必填
+        var secret = self.setEncrypt("CdA29ij0gm1oU2lRV0Ev"); //综合安防管理平台提供的secret，必填
+        var ip = "120.220.57.235"; //综合安防管理平台IP地址，必填
+        var playMode = 0; //初始播放模式：0-预览，1-回放
+        var port = 18180; //综合安防管理平台端口，若启用HTTPS协议，默认443
+        var snapDir = "D:\\SnapDir"; //抓图存储路径
+        var videoDir = "D:\\VideoDir"; //紧急录像或录像剪辑存储路径
+        var layout = "1x1"; //playMode指定模式的布局
+        var enableHTTPS = 0; //是否启用HTTPS协议与综合安防管理平台交互，这里总是填1
+        var encryptedFields = "secret"; //加密字段，默认加密领域为secret
+        var showToolbar = 1; //是否显示工具栏，0-不显示，非0-显示
+        var showSmart = 1; //是否显示智能信息（如配置移动侦测后画面上的线框），0-不显示，非0-显示
+        var buttonIDs = "0,16,256,257,258,259,260,512,513,514,515,516,517,768,769"; //自定义工具条按钮
+        ////////////////////////////////// 请自行修改以上变量值	////////////////////////////////////
+
+        self.oWebControl.JS_RequestInterface({
+          funcName: "init",
+          argument: __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()({
+            appkey: appkey, //API网关提供的appkey
+            secret: secret, //API网关提供的secret
+            ip: ip, //API网关IP地址
+            playMode: playMode, //播放模式（决定显示预览还是回放界面）
+            port: port, //端口
+            snapDir: snapDir, //抓图存储路径
+            videoDir: videoDir, //紧急录像或录像剪辑存储路径
+            layout: layout, //布局
+            enableHTTPS: enableHTTPS, //是否启用HTTPS协议
+            encryptedFields: encryptedFields, //加密字段
+            showToolbar: showToolbar, //是否显示工具栏
+            showSmart: showSmart, //是否显示智能信息
+            buttonIDs: buttonIDs //自定义工具条按钮
+          })
+        }).then(function (oData) {
+          self.oWebControl.JS_Resize(1000, 600); // 初始化后resize一次，规避firefox下首次显示窗口后插件窗口未与DIV窗口重合问题
+          self.previewVideo();
+        });
+      });
+    },
+
+    //获取公钥
+    getPubKey: function getPubKey(callback) {
+      var self = this;
+      self.oWebControl.JS_RequestInterface({
+        funcName: "getRSAPubKey",
+        argument: __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()({
+          keyLength: 1024
+        })
+      }).then(function (oData) {
+        console.log(oData);
+        if (oData.responseMsg.data) {
+          self.pubKey = oData.responseMsg.data;
+          callback();
+        }
+      });
+    },
+
+    //RSA加密
+    setEncrypt: function setEncrypt(value) {
+      var self = this;
+      var encrypt = new JSEncrypt();
+      encrypt.setPublicKey(self.pubKey);
+      return encrypt.encrypt(value);
+    },
+    previewVideo: function previewVideo() {
+      var self = this;
+      var cameraIndexCode = self.cameraIndexCode; //获取输入的监控点编号值，必填
+      var streamMode = 0; //主子码流标识：0-主码流，1-子码流
+      var transMode = 1; //传输协议：0-UDP，1-TCP
+      var gpuMode = 0; //是否启用GPU硬解，0-不启用，1-启用
+      var wndId = -1; //播放窗口序号（在2x2以上布局下可指定播放窗口）
+
+      cameraIndexCode = cameraIndexCode.replace(/(^\s*)/g, "");
+      cameraIndexCode = cameraIndexCode.replace(/(\s*$)/g, "");
+
+      self.oWebControl.JS_RequestInterface({
+        funcName: "startPreview",
+        argument: __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()({
+          cameraIndexCode: cameraIndexCode, //监控点编号
+          streamMode: streamMode, //主子码流标识
+          transMode: transMode, //传输协议
+          gpuMode: gpuMode, //是否开启GPU硬解
+          wndId: wndId, //可指定播放窗口
+          streamType: 1,
+          protocol: "rtsp",
+          transmode: 1,
+          expand: "streamform=rtp&transcode=1&videotype=h264"
+        })
+      });
+    },
+
+    // 推送消息
+    cbIntegrationCallBack: function cbIntegrationCallBack(oData) {
+      console.log(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()(oData.responseMsg));
+    },
+    stopAllPreview: function stopAllPreview() {
+      var self = this;
+      self.oWebControl.JS_RequestInterface({
+        funcName: "stopAllPreview"
+      });
+    },
+    destoryVideo: function destoryVideo() {
+      var self = this;
+      if (self.oWebControl != null) {
+        self.oWebControl.JS_HideWnd(); // 先让窗口隐藏，规避可能的插件窗口滞后于浏览器消失问题
+        self.oWebControl.JS_Disconnect().then(function () {
+          console.log("断开与插件服务连接成功");
+        }, function () {
+          console.log("断开与插件服务连接失败");
+        });
+      }
+    }
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.stopAllPreview();
+    this.destoryVideo();
+  }
+});
+
+/***/ }),
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App_vue__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App_vue__ = __webpack_require__(13);
 
 
 
@@ -715,7 +1002,7 @@ new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
 });
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12686,10 +12973,10 @@ Vue.compile = compileToFunctions;
 
 /* harmony default export */ __webpack_exports__["a"] = (Vue);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0), __webpack_require__(8).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(3), __webpack_require__(10).setImmediate))
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
@@ -12745,7 +13032,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(9);
+__webpack_require__(11);
 // On some exotic environments, it's not clear which object `setimmediate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -12756,10 +13043,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -12949,10 +13236,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(10)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(12)))
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -13142,17 +13429,17 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(4);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_06c225f1_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_7f457aea_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(33);
 function injectStyle (ssrContext) {
-  __webpack_require__(12)
+  __webpack_require__(14)
 }
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(2)
 /* script */
 
 
@@ -13168,7 +13455,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_App_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_06c225f1_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_7f457aea_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -13179,23 +13466,23 @@ var Component = normalizeComponent(
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(13);
+var content = __webpack_require__(15);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(2)("28e73a63", content, true, {});
+var update = __webpack_require__(1)("305a1f10", content, true, {});
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(1)(false);
+exports = module.exports = __webpack_require__(0)(false);
 // imports
 
 
@@ -13206,7 +13493,7 @@ exports.push([module.i, "body,html{margin:0;padding:0;font-size:10px;font-family
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports) {
 
 /**
@@ -13239,17 +13526,81 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_ZnvVideo_vue__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_Video_vue__ = __webpack_require__(5);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_5a35957b_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_ZnvVideo_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_b68e4890_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_Video_vue__ = __webpack_require__(31);
 function injectStyle (ssrContext) {
-  __webpack_require__(16)
+  __webpack_require__(18)
 }
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(2)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_Video_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_b68e4890_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_Video_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(19);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(1)("23e7a33e", content, true, {});
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".video{height:100%}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_ZnvVideo_vue__ = __webpack_require__(6);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_1dfb8793_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_ZnvVideo_vue__ = __webpack_require__(23);
+function injectStyle (ssrContext) {
+  __webpack_require__(21)
+}
+var normalizeComponent = __webpack_require__(2)
 /* script */
 
 
@@ -13265,7 +13616,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_ZnvVideo_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_5a35957b_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_ZnvVideo_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_1dfb8793_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_ZnvVideo_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -13276,23 +13627,23 @@ var Component = normalizeComponent(
 
 
 /***/ }),
-/* 16 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(17);
+var content = __webpack_require__(22);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(2)("73046250", content, true, {});
+var update = __webpack_require__(1)("ea28dac6", content, true, {});
 
 /***/ }),
-/* 17 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(1)(false);
+exports = module.exports = __webpack_require__(0)(false);
 // imports
 
 
@@ -13303,7 +13654,7 @@ exports.push([module.i, ".box-video,.box-video .znv-video{width:100%;height:100%
 
 
 /***/ }),
-/* 18 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13313,7 +13664,116 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
 
 /***/ }),
-/* 19 */
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_HikVideo_vue__ = __webpack_require__(7);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_d3c3b1a6_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_HikVideo_vue__ = __webpack_require__(30);
+function injectStyle (ssrContext) {
+  __webpack_require__(25)
+}
+var normalizeComponent = __webpack_require__(2)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_script_index_0_HikVideo_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_7_3_vue_loader_lib_template_compiler_index_id_data_v_d3c3b1a6_hasScoped_false_buble_transforms_node_modules_vue_loader_13_7_3_vue_loader_lib_selector_type_template_index_0_HikVideo_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(26);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(1)("62ae0d3c", content, true, {});
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".playWnd{width:1000px;height:600px;border:1px solid red}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(28), __esModule: true };
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var core = __webpack_require__(29);
+var $JSON = core.JSON || (core.JSON = { stringify: JSON.stringify });
+module.exports = function stringify(it) { // eslint-disable-line no-unused-vars
+  return $JSON.stringify.apply($JSON, arguments);
+};
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+var core = module.exports = { version: '2.6.11' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"playWnd",staticStyle:{"left":"0","top":"0"},attrs:{"id":_vm.vId}})}
+var staticRenderFns = []
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"video"},[(_vm.type === 'hik')?_c('hik-video',{attrs:{"vId":_vm.vId,"cameraIndexCode":_vm.cameraIndexCode}}):_c('znv-video',{attrs:{"vId":_vm.vId,"src":_vm.src,"type":_vm.type,"ws":_vm.ws}})],1)}
+var staticRenderFns = []
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports) {
 
 /**
@@ -13451,11 +13911,11 @@ module.exports = {
 }
 
 /***/ }),
-/* 20 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"app"}},[(_vm.item.src)?_c('znv-video',{attrs:{"src":_vm.item.src,"type":_vm.item.type,"playerType":_vm.item.playerType,"ws":_vm.item.ws}}):_vm._e()],1)}
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"app"}},[(_vm.item.src)?_c('znv-video',{attrs:{"src":_vm.item.src,"type":_vm.item.type,"playerType":_vm.item.playerType,"ws":_vm.item.ws,"cameraIndexCode":_vm.item.cameraIndexCode}}):_vm._e()],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);

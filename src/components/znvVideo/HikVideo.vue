@@ -1,5 +1,5 @@
 <template>
-  <div :id="vId" class="playWnd" style="left: 109px; top: 133px;"></div>
+  <div :id="vId" class="playWnd" style="left: 0; top: 0;"></div>
 </template>
 
 <script>
@@ -11,7 +11,12 @@ export default {
       required: true,
       default: ""
     },
-    cameraIndexCode: {
+    cameraIndexCodes: {
+      type: String,
+      required: false,
+      default: ""
+    },
+    hikLayer: {
       type: String,
       required: false,
       default: ""
@@ -27,7 +32,17 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.initPlugin();
-    })
+    });
+  },
+  watch: {
+    cameraIndexCodes(v) {
+      let self = this
+      this.stopAllPreview().then(() => {
+        v.split(',').forEach(e => {
+          self.previewVideo(e);
+        })
+      });
+    }
   },
   methods: {
     initPlugin() {
@@ -90,17 +105,17 @@ export default {
       let self = this;
       self.getPubKey(function() {
         ////////////////////////////////// 请自行修改以下变量值	////////////////////////////////////
-        var appkey = "27884407"; //综合安防管理平台提供的appkey，必填
-        var secret = self.setEncrypt("vo2IbnwLJTegEXJDSA9B"); //综合安防管理平台提供的secret，必填
-        var ip = "172.26.78.212"; //综合安防管理平台IP地址，必填
+        var appkey = "23692284"; //综合安防管理平台提供的appkey，必填
+        var secret = self.setEncrypt("CdA29ij0gm1oU2lRV0Ev"); //综合安防管理平台提供的secret，必填
+        var ip = "120.220.57.235"; //综合安防管理平台IP地址，必填
         var playMode = 0; //初始播放模式：0-预览，1-回放
-        var port = 443; //综合安防管理平台端口，若启用HTTPS协议，默认443
+        var port = 18180; //综合安防管理平台端口，若启用HTTPS协议，默认443
         var snapDir = "D:\\SnapDir"; //抓图存储路径
         var videoDir = "D:\\VideoDir"; //紧急录像或录像剪辑存储路径
-        var layout = "1x1"; //playMode指定模式的布局
-        var enableHTTPS = 1; //是否启用HTTPS协议与综合安防管理平台交互，这里总是填1
+        var layout = self.hikLayer; //playMode指定模式的布局
+        var enableHTTPS = 0; //是否启用HTTPS协议与综合安防管理平台交互，这里总是填1
         var encryptedFields = "secret"; //加密字段，默认加密领域为secret
-        var showToolbar = 1; //是否显示工具栏，0-不显示，非0-显示
+        var showToolbar = 0; //是否显示工具栏，0-不显示，非0-显示
         var showSmart = 1; //是否显示智能信息（如配置移动侦测后画面上的线框），0-不显示，非0-显示
         var buttonIDs =
           "0,16,256,257,258,259,260,512,513,514,515,516,517,768,769"; //自定义工具条按钮
@@ -126,8 +141,10 @@ export default {
             })
           })
           .then(function(oData) {
-            self.oWebControl.JS_Resize(1000, 600); // 初始化后resize一次，规避firefox下首次显示窗口后插件窗口未与DIV窗口重合问题
-            self.previewVideo();
+            self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight); // 初始化后resize一次，规避firefox下首次显示窗口后插件窗口未与DIV窗口重合问题
+            self.cameraIndexCodes.split(',').forEach(e => {
+              self.previewVideo(e);
+            })
           });
       });
     },
@@ -156,9 +173,9 @@ export default {
       encrypt.setPublicKey(self.pubKey);
       return encrypt.encrypt(value);
     },
-    previewVideo() {
+    previewVideo(cameraIndexCode) {
       let self = this;
-      var cameraIndexCode = self.cameraIndexCode; //获取输入的监控点编号值，必填
+      var cameraIndexCode = cameraIndexCode; //获取输入的监控点编号值，必填
       var streamMode = 0; //主子码流标识：0-主码流，1-子码流
       var transMode = 1; //传输协议：0-UDP，1-TCP
       var gpuMode = 0; //是否启用GPU硬解，0-不启用，1-启用
@@ -174,7 +191,11 @@ export default {
           streamMode: streamMode, //主子码流标识
           transMode: transMode, //传输协议
           gpuMode: gpuMode, //是否开启GPU硬解
-          wndId: wndId //可指定播放窗口
+          wndId: wndId, //可指定播放窗口
+          streamType: 1,
+          protocol: "rtsp",
+          transmode: 1,
+          expand: "streamform=rtp&transcode=1&videotype=h264"
         })
       });
     },
@@ -184,7 +205,7 @@ export default {
     },
     stopAllPreview() {
       let self = this;
-      self.oWebControl.JS_RequestInterface({
+      return self.oWebControl.JS_RequestInterface({
         funcName: "stopAllPreview"
       });
     },
@@ -204,17 +225,16 @@ export default {
     }
   },
   beforeDestroy() {
-    this.stopAllPreview();
-    this.destoryVideo();
+    this.stopAllPreview().then(() => {
+      this.destoryVideo();
+    });
   }
 };
 </script>
 
 <style lang="scss">
 .playWnd {
-  margin: 30px 0 0 400px;
-  width: 1000px;
-  height: 600px;
-  border: 1px solid red;
+  width: 100%;
+  height: 100%;
 }
 </style>
