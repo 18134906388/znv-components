@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <znv-video :src="item.src" :type="item.type" :ref="item.vId"></znv-video>
+    <znv-video :src="item.src" :type="item.type" :ws="item.ws" :ref="item.vId"></znv-video>
   </div>
 </template>
 
@@ -13,8 +13,9 @@ export default {
   data () {
     return {
       item: {
-        src: 'https://flvopen.ys7.com:9188/openlive/c447724d034446ce8f40f02a661d8eaf.flv',
-        type: 'flv'
+        src: 'rtsp://10.72.55.30:5542/live/61000000001310000004/0',
+        type: 'rtsp',
+        ws: 'ws://10.72.55.30:8060/ws'
       }
     }
   }

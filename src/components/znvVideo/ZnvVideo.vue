@@ -51,7 +51,7 @@ import videojs from 'video.js'
 import 'videojs-flash'
 import 'video.js/dist/video-js.css'
 import language from '../../libs/video/hlsVideoLanguage.js'
-import '../../libs/video/streamedian/streamedian.min.js'
+import '../../libs/video/streamedian/streamedianAACH264H265.min.js'
 import flvjs from '../../libs/video/flv-epubcn/index.js'
 import EZUIKit from '../../libs/video/EZUIKit-JavaScript-master/ezuikit.js'
 import { createUUID } from '../../utils'
@@ -255,6 +255,8 @@ export default {
               self.reconnectWs()
             } else if (message === 9000004) {
               self.rtspMessage = '正在重连视频'
+            } else if (message === 9000008) {
+              self.rtspMessage = '请求h265'
             } else {
               self.rtspMessage = message.toFixed(2) + 'kbps'
             }
@@ -264,7 +266,13 @@ export default {
             redirectNativeMediaErrors: true,
             bufferDuration: 5,
             errorHandler: errHandler,
-            statuHandler: stuHandler
+            statuHandler: stuHandler,
+            isH265: true,
+            isH265Url: 'ws://10.72.55.30:8070/live/61000000001310000004/0.live.mp4',
+            // rtspUrl: 'rtsp://10.72.55.30:5542/live/61000000001310000004/0',
+            // camera_id: '61000000001310000004',
+            // wsUrl: 'ws://10.72.55.30:8070/live/61000000001310000004/0.live.mp4',
+            streamMark: '1PJDjJrG+3H2PHCGROjO2MQeT7kHtnzvU7pZybILGxH4BJ34ASZ8pUtf6XGoKavjXtrcaHsz4hBSpcryRTe/lb9MJg=='
           }
           this.player = window.Streamedian.player(
             this.vId,
