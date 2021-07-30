@@ -58,11 +58,7 @@ body {
   width: 100%;
   height: 100%;
   .video1 {
-    widows: 500px;
-    height: 600px;
-  }
-  .video2 {
-    widows: 500px;
+    width: 500px;
     height: 600px;
   }
 }

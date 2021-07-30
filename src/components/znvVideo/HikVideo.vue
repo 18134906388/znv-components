@@ -30,21 +30,97 @@ export default {
     };
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initPlugin();
+    let self = this;
+    self.$nextTick(() => {
+      self.initPlugin();
+    });
+    // 监听resize事件，使插件窗口尺寸跟随DIV窗口变化
+    $(window).resize(function() {
+      if (self.oWebControl != null) {
+        self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight);
+        self.setWndCover();
+      }
+    });
+
+    // 监听滚动条scroll事件，使插件窗口跟随浏览器滚动而移动
+    $(window).scroll(function() {
+      if (self.oWebControl != null) {
+        self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight);
+        self.setWndCover();
+      }
     });
   },
   watch: {
     cameraIndexCodes(v) {
-      let self = this
+      let self = this;
       this.stopAllPreview().then(() => {
-        v.split(',').forEach(e => {
+        v.split(",").forEach(e => {
           self.previewVideo(e);
-        })
+        });
       });
-    }
+    },
+    '$store.getters.integration': {
+      handler(v) {
+        let self = this;
+        if (v.msgId === 1024 && v.componentId !== self.vId) {
+          console.log('隐藏' + self.vId)
+          self.oWebControl.JS_HideWnd()
+        } else if (v.msgId === 1025 && v.componentId !== self.vId) {
+          console.log('显示' + self.vId)
+          self.oWebControl.JS_ShowWnd()
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
+    // 设置窗口裁剪，当因滚动条滚动导致窗口需要被遮住的情况下需要JS_CuttingPartWindow部分窗口
+    setWndCover() {
+      let self = this;
+      var iWidth = $(window).width();
+      var iHeight = $(window).height();
+      var oDivRect = $("#" + self.vId)
+        .get(0)
+        .getBoundingClientRect();
+
+      var iCoverLeft = oDivRect.left < 0 ? Math.abs(oDivRect.left) : 0;
+      var iCoverTop = oDivRect.top < 0 ? Math.abs(oDivRect.top) : 0;
+      var iCoverRight =
+        oDivRect.right - iWidth > 0 ? Math.round(oDivRect.right - iWidth) : 0;
+      var iCoverBottom =
+        oDivRect.bottom - iHeight > 0
+          ? Math.round(oDivRect.bottom - iHeight)
+          : 0;
+
+      iCoverLeft = iCoverLeft > self.$el.offsetWidth ? self.$el.offsetWidth : iCoverLeft;
+      iCoverTop = iCoverTop > self.$el.offsetHeight ? self.$el.offsetHeight : iCoverTop;
+      iCoverRight = iCoverRight > self.$el.offsetWidth ? self.$el.offsetWidth : iCoverRight;
+      iCoverBottom = iCoverBottom > self.$el.offsetHeight ? self.$el.offsetHeight : iCoverBottom;
+
+      self.oWebControl.JS_RepairPartWindow(0, 0, self.$el.offsetWidth + 1, self.$el.offsetHeight); // 多1个像素点防止还原后边界缺失一个像素条
+      if (iCoverLeft != 0) {
+        self.oWebControl.JS_CuttingPartWindow(0, 0, iCoverLeft, self.$el.offsetHeight);
+      }
+      if (iCoverTop != 0) {
+        self.oWebControl.JS_CuttingPartWindow(0, 0, self.$el.offsetWidth + 1, iCoverTop); // 多剪掉一个像素条，防止出现剪掉一部分窗口后出现一个像素条
+      }
+      if (iCoverRight != 0) {
+        self.oWebControl.JS_CuttingPartWindow(
+          self.$el.offsetWidth - iCoverRight,
+          0,
+          iCoverRight,
+          self.$el.offsetHeight
+        );
+      }
+      if (iCoverBottom != 0) {
+        self.oWebControl.JS_CuttingPartWindow(
+          0,
+          self.$el.offsetHeight - iCoverBottom,
+          self.$el.offsetWidth,
+          iCoverBottom
+        );
+      }
+    },
     initPlugin() {
       let self = this;
       self.oWebControl = new WebControl({
@@ -68,7 +144,11 @@ export default {
                 });
 
                 self.oWebControl
-                  .JS_CreateWnd(self.vId, 1000, 600)
+                  .JS_CreateWnd(
+                    self.vId,
+                    self.$el.offsetWidth,
+                    self.$el.offsetHeight
+                  )
                   .then(function() {
                     //JS_CreateWnd创建视频播放窗口，宽高可设定
                     self.init(); // 创建播放实例成功后初始化
@@ -115,7 +195,8 @@ export default {
         var layout = self.hikLayer; //playMode指定模式的布局
         var enableHTTPS = 0; //是否启用HTTPS协议与综合安防管理平台交互，这里总是填1
         var encryptedFields = "secret"; //加密字段，默认加密领域为secret
-        var showToolbar = 0; //是否显示工具栏，0-不显示，非0-显示
+        var showToolbar = 1; //是否显示工具栏，0-不显示，非0-显示
+        var toolBarButtonIDs = "2049,2050,4100,4098"
         var showSmart = 1; //是否显示智能信息（如配置移动侦测后画面上的线框），0-不显示，非0-显示
         var buttonIDs =
           "0,16,256,257,258,259,260,512,513,514,515,516,517,768,769"; //自定义工具条按钮
@@ -136,15 +217,19 @@ export default {
               enableHTTPS: enableHTTPS, //是否启用HTTPS协议
               encryptedFields: encryptedFields, //加密字段
               showToolbar: showToolbar, //是否显示工具栏
+              toolBarButtonIDs: toolBarButtonIDs,
               showSmart: showSmart, //是否显示智能信息
               buttonIDs: buttonIDs //自定义工具条按钮
             })
           })
           .then(function(oData) {
-            self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight); // 初始化后resize一次，规避firefox下首次显示窗口后插件窗口未与DIV窗口重合问题
-            self.cameraIndexCodes.split(',').forEach(e => {
+            self.oWebControl.JS_Resize(
+              self.$el.offsetWidth,
+              self.$el.offsetHeight
+            ); // 初始化后resize一次，规避firefox下首次显示窗口后插件窗口未与DIV窗口重合问题
+            self.cameraIndexCodes.split(",").forEach(e => {
               self.previewVideo(e);
-            })
+            });
           });
       });
     },
@@ -202,6 +287,17 @@ export default {
     // 推送消息
     cbIntegrationCallBack(oData) {
       console.log(JSON.stringify(oData.responseMsg));
+      if (oData.responseMsg.msg.result === 1024) { // 全屏
+        this.$store.dispatch('view/setIntegration', {
+          msgId: 1024,
+          componentId: this.vId
+        })
+      } else if (oData.responseMsg.msg.result === 1025) {
+        this.$store.dispatch('view/setIntegration', {
+          msgId: 1025,
+          componentId: this.vId
+        })
+      }
     },
     stopAllPreview() {
       let self = this;
