@@ -20,24 +20,40 @@ export default {
       type: String,
       required: false,
       default: ""
+    },
+    width: {
+      type: Number,
+      required: false,
+      default: 0
+    },
+    height: {
+      type: Number,
+      required: false,
+      default: 0
     }
   },
   data() {
     return {
       oWebControl: null,
       initCount: 0,
-      pubKey: ""
+      pubKey: "",
+      streamMode: 1,
+      offsetWidth: 0,
+      offsetHeight: 0
     };
   },
   mounted() {
     let self = this;
+    self.offsetWidth = self.width || self.$el.offsetWidth
+    self.offsetHeight = self.height || self.$el.offsetHeight
+    console.log(self.offsetWidth, self.offsetHeight)
     self.$nextTick(() => {
       self.initPlugin();
     });
     // 监听resize事件，使插件窗口尺寸跟随DIV窗口变化
     $(window).resize(function() {
       if (self.oWebControl != null) {
-        self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight);
+        self.oWebControl.JS_Resize(self.offsetWidth, self.offsetHeight);
         self.setWndCover();
       }
     });
@@ -45,7 +61,7 @@ export default {
     // 监听滚动条scroll事件，使插件窗口跟随浏览器滚动而移动
     $(window).scroll(function() {
       if (self.oWebControl != null) {
-        self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight);
+        self.oWebControl.JS_Resize(self.offsetWidth, self.offsetHeight);
         self.setWndCover();
       }
     });
@@ -92,31 +108,31 @@ export default {
           ? Math.round(oDivRect.bottom - iHeight)
           : 0;
 
-      iCoverLeft = iCoverLeft > self.$el.offsetWidth ? self.$el.offsetWidth : iCoverLeft;
-      iCoverTop = iCoverTop > self.$el.offsetHeight ? self.$el.offsetHeight : iCoverTop;
-      iCoverRight = iCoverRight > self.$el.offsetWidth ? self.$el.offsetWidth : iCoverRight;
-      iCoverBottom = iCoverBottom > self.$el.offsetHeight ? self.$el.offsetHeight : iCoverBottom;
+      iCoverLeft = iCoverLeft > self.offsetWidth ? self.offsetWidth : iCoverLeft;
+      iCoverTop = iCoverTop > self.offsetHeight ? self.offsetHeight : iCoverTop;
+      iCoverRight = iCoverRight > self.offsetWidth ? self.offsetWidth : iCoverRight;
+      iCoverBottom = iCoverBottom > self.offsetHeight ? self.offsetHeight : iCoverBottom;
 
-      self.oWebControl.JS_RepairPartWindow(0, 0, self.$el.offsetWidth + 1, self.$el.offsetHeight); // 多1个像素点防止还原后边界缺失一个像素条
+      self.oWebControl.JS_RepairPartWindow(0, 0, self.offsetWidth + 1, self.offsetHeight); // 多1个像素点防止还原后边界缺失一个像素条
       if (iCoverLeft != 0) {
-        self.oWebControl.JS_CuttingPartWindow(0, 0, iCoverLeft, self.$el.offsetHeight);
+        self.oWebControl.JS_CuttingPartWindow(0, 0, iCoverLeft, self.offsetHeight);
       }
       if (iCoverTop != 0) {
-        self.oWebControl.JS_CuttingPartWindow(0, 0, self.$el.offsetWidth + 1, iCoverTop); // 多剪掉一个像素条，防止出现剪掉一部分窗口后出现一个像素条
+        self.oWebControl.JS_CuttingPartWindow(0, 0, self.offsetWidth + 1, iCoverTop); // 多剪掉一个像素条，防止出现剪掉一部分窗口后出现一个像素条
       }
       if (iCoverRight != 0) {
         self.oWebControl.JS_CuttingPartWindow(
-          self.$el.offsetWidth - iCoverRight,
+          self.offsetWidth - iCoverRight,
           0,
           iCoverRight,
-          self.$el.offsetHeight
+          self.offsetHeight
         );
       }
       if (iCoverBottom != 0) {
         self.oWebControl.JS_CuttingPartWindow(
           0,
-          self.$el.offsetHeight - iCoverBottom,
-          self.$el.offsetWidth,
+          self.offsetHeight - iCoverBottom,
+          self.offsetWidth,
           iCoverBottom
         );
       }
@@ -146,8 +162,8 @@ export default {
                 self.oWebControl
                   .JS_CreateWnd(
                     self.vId,
-                    self.$el.offsetWidth,
-                    self.$el.offsetHeight
+                    self.offsetWidth,
+                    self.offsetHeight
                   )
                   .then(function() {
                     //JS_CreateWnd创建视频播放窗口，宽高可设定
@@ -224,8 +240,8 @@ export default {
           })
           .then(function(oData) {
             self.oWebControl.JS_Resize(
-              self.$el.offsetWidth,
-              self.$el.offsetHeight
+              self.offsetWidth,
+              self.offsetHeight
             ); // 初始化后resize一次，规避firefox下首次显示窗口后插件窗口未与DIV窗口重合问题
             self.cameraIndexCodes.split(",").forEach(e => {
               self.previewVideo(e);
@@ -261,7 +277,7 @@ export default {
     previewVideo(cameraIndexCode) {
       let self = this;
       var cameraIndexCode = cameraIndexCode; //获取输入的监控点编号值，必填
-      var streamMode = 0; //主子码流标识：0-主码流，1-子码流
+      var streamMode = self.streamMode; //主子码流标识：0-主码流，1-子码流
       var transMode = 1; //传输协议：0-UDP，1-TCP
       var gpuMode = 0; //是否启用GPU硬解，0-不启用，1-启用
       var wndId = -1; //播放窗口序号（在2x2以上布局下可指定播放窗口）
@@ -292,11 +308,20 @@ export default {
           msgId: 1024,
           componentId: this.vId
         })
+        // 全屏切主码流
+        this.streamMode = 0
+        this.stopAllPreview().then(() => {
+          this.cameraIndexCodes.split(",").forEach(e => {
+            this.previewVideo(e);
+          });
+        });
       } else if (oData.responseMsg.msg.result === 1025) {
         this.$store.dispatch('view/setIntegration', {
           msgId: 1025,
           componentId: this.vId
         })
+        // 退出全屏切子码流
+        this.streamMode = 1
       }
     },
     stopAllPreview() {
