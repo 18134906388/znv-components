@@ -94,7 +94,16 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     noInfo: true,
-    overlay: true
+    overlay: true,
+    proxy: {
+      '/apis': {
+        target: 'http://172.16.2.157:8088/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/apis': ''
+        }
+      }
+    }
   },
   performance: {
     hints: false

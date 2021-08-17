@@ -3,8 +3,9 @@
     <div class="video1">
       <znv-video
         :type="item.type"
-        :hikLayer="item.hikLayer"
-        :cameraIndexCodes="item.cameraIndexCodes"
+        :cameraId="item.cameraId"
+        :src="item.src"
+        :ws="item.ws"
       ></znv-video>
     </div>
   </div>
@@ -23,10 +24,11 @@ export default {
   data() {
     return {
       item: {
-        type: "hik",
-        hikLayer: '2x2',
-        cameraIndexCodes:
-          "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
+        type: "rtsp",
+        cameraId: '61000000001310000004',
+        // src: 'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
+        // ws: 'ws://10.45.154.187:8060/ws',
+        // cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
       }
     };
   },
