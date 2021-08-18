@@ -3,6 +3,16 @@
 </template>
 
 <script>
+if (!sessionStorage.setItemNew) {
+  var orignalSetItem = sessionStorage.setItem;
+  sessionStorage.setItem = function(key, newValue) {
+    var setItemEvent = new Event("setItemEvent");
+    setItemEvent.newValue = newValue;
+    window.dispatchEvent(setItemEvent);
+    orignalSetItem.apply(this, arguments);
+  };
+  sessionStorage.setItemNew = true
+}
 export default {
   name: "HikVideo",
   props: {
@@ -65,6 +75,23 @@ export default {
         self.setWndCover();
       }
     });
+    window.addEventListener("setItemEvent", function(e) {
+      if ((e.key = "integration")) {
+        var _this = sessionStorage.getItem("integration");
+        if (_this != e.newValue) {
+          if (e.newValue) {
+            let v = JSON.parse(e.newValue)
+            if (v.msgId === 1024 && v.componentId !== self.vId) {
+              console.log('隐藏' + self.vId)
+              self.oWebControl.JS_HideWnd()
+            } else if (v.msgId === 1025 && v.componentId !== self.vId) {
+              console.log('显示' + self.vId)
+              self.oWebControl.JS_ShowWnd()
+            }
+          }
+        }
+      }
+    });
   },
   watch: {
     cameraIndexCodes(v) {
@@ -74,20 +101,7 @@ export default {
           self.previewVideo(e);
         });
       });
-    },
-    '$store.getters.integration': {
-      handler(v) {
-        let self = this;
-        if (v.msgId === 1024 && v.componentId !== self.vId) {
-          console.log('隐藏' + self.vId)
-          self.oWebControl.JS_HideWnd()
-        } else if (v.msgId === 1025 && v.componentId !== self.vId) {
-          console.log('显示' + self.vId)
-          self.oWebControl.JS_ShowWnd()
-        }
-      },
-      deep: true,
-    },
+    }
   },
   methods: {
     // 设置窗口裁剪，当因滚动条滚动导致窗口需要被遮住的情况下需要JS_CuttingPartWindow部分窗口
@@ -304,10 +318,10 @@ export default {
     cbIntegrationCallBack(oData) {
       console.log(JSON.stringify(oData.responseMsg));
       if (oData.responseMsg.msg.result === 1024) { // 全屏
-        this.$store.dispatch('view/setIntegration', {
+        sessionStorage.setItem('integration', JSON.stringify({
           msgId: 1024,
           componentId: this.vId
-        })
+        }))
         // 全屏切主码流
         this.streamMode = 0
         this.stopAllPreview().then(() => {
@@ -316,10 +330,10 @@ export default {
           });
         });
       } else if (oData.responseMsg.msg.result === 1025) {
-        this.$store.dispatch('view/setIntegration', {
+        sessionStorage.setItem('integration', JSON.stringify({
           msgId: 1025,
           componentId: this.vId
-        })
+        }))
         // 退出全屏切子码流
         this.streamMode = 1
       }
@@ -346,6 +360,7 @@ export default {
     }
   },
   beforeDestroy() {
+    window.removeEventListener("setItemEvent")
     this.stopAllPreview().then(() => {
       this.destoryVideo();
     });

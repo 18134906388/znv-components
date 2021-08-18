@@ -6,6 +6,7 @@
         :cameraId="item.cameraId"
         :src="item.src"
         :ws="item.ws"
+        :cameraIndexCodes="item.cameraIndexCodes"
       ></znv-video>
     </div>
   </div>
@@ -24,18 +25,16 @@ export default {
   data() {
     return {
       item: {
-        type: "rtsp",
+        type: "hik",
         cameraId: '61000000001310000004',
-        // src: 'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
-        // ws: 'ws://10.45.154.187:8060/ws',
-        // cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
+        src: 'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
+        ws: 'ws://10.45.154.187:8060/ws',
+        hikLayer: '2X2',
+        cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
       }
     };
   },
   mounted() {
-    setTimeout(() => {
-      this.item.cameraIndexCodes = '1,2'
-    }, 3000);
     // let queryObj = st.url2json(location.href)
     // queryObj.src && (this.item.src = unescape(queryObj.src))
     // queryObj.type && (this.item.type = queryObj.type)
