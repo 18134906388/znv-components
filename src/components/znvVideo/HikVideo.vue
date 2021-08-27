@@ -61,20 +61,12 @@ export default {
       self.initPlugin();
     });
     // 监听resize事件，使插件窗口尺寸跟随DIV窗口变化
-    $(window).resize(function() {
-      if (self.oWebControl != null) {
-        self.oWebControl.JS_Resize(self.offsetWidth, self.offsetHeight);
-        self.setWndCover();
-      }
-    });
+    $(window).resize(self.winResize);
 
     // 监听滚动条scroll事件，使插件窗口跟随浏览器滚动而移动
-    $(window).scroll(function() {
-      if (self.oWebControl != null) {
-        self.oWebControl.JS_Resize(self.offsetWidth, self.offsetHeight);
-        self.setWndCover();
-      }
-    });
+    // 不能使用overflow样式，不能使用el-scrollbar组件
+    window.addEventListener('scroll', self.winScroll);
+
     window.addEventListener("setItemEvent", function(e) {
       if ((e.key = "integration")) {
         var _this = sessionStorage.getItem("integration");
@@ -104,6 +96,20 @@ export default {
     }
   },
   methods: {
+    winResize() {
+      let self = this
+      if (self.oWebControl != null) {
+        self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight);
+        self.setWndCover();
+      }
+    },
+    winScroll() {
+      let self = this
+      if (self.oWebControl != null) {
+        self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight);
+        self.setWndCover();
+      }
+    },
     // 设置窗口裁剪，当因滚动条滚动导致窗口需要被遮住的情况下需要JS_CuttingPartWindow部分窗口
     setWndCover() {
       let self = this;
@@ -360,6 +366,8 @@ export default {
     }
   },
   beforeDestroy() {
+    $(window).off("resize", this.winResize);
+    window.removeEventListener('scroll', this.winScroll);
     window.removeEventListener("setItemEvent")
     this.stopAllPreview().then(() => {
       this.destoryVideo();
