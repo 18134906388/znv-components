@@ -86,6 +86,14 @@ export default {
     });
   },
   watch: {
+    width(v) {
+      let self = this;
+      self.offsetWidth = v || self.$el.offsetWidth
+    },
+    height(v) {
+      let self = this;
+      self.offsetHeight = v || self.$el.offsetHeight
+    },
     cameraIndexCodes(v) {
       let self = this;
       this.stopAllPreview().then(() => {

@@ -24,13 +24,21 @@ export default {
   components: { ZnvVideo },
   data() {
     return {
+      // item: {
+      //   type: "hik",
+      //   cameraId: '61000000001310000004',
+      //   src: 'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
+      //   ws: 'ws://10.45.154.187:8060/ws',
+      //   hikLayer: '2X2',
+      //   cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
+      // }
       item: {
-        type: "hik",
-        cameraId: '61000000001310000004',
-        src: 'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
-        ws: 'ws://10.45.154.187:8060/ws',
-        hikLayer: '2X2',
-        cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
+        type: "hls",
+        cameraId: '',
+        src: 'https://hls01open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.m3u8',
+        ws: '',
+        hikLayer: '',
+        cameraIndexCodes: ""
       }
     };
   },

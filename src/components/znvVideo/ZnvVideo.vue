@@ -20,7 +20,7 @@ export default {
   data() {
     return {
       options: {
-        techOrder: ['html5', 'Flvjs', 'Streamedianjs'],
+        techOrder: ['html5', 'Hlsjs', 'Flvjs', 'Streamedianjs'],
         autoplay: true,
         controls: true, // 是否显示控制条
         language: 'zh-CN', // 设置语言
@@ -90,7 +90,7 @@ export default {
     initHls() {
       this.player.src({
         src: this.src,
-        type: 'application/x-mpegURL',
+        type: 'video/x-hls',
       })
     },
     initRtsp() {
@@ -215,7 +215,7 @@ export default {
       pointer-events: none;
     }
   }
-  .rtsp-video{
+  .rtsp-video, .hls-video{
     .vjs-progress-control{
       visibility: hidden;
     }
