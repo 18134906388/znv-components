@@ -26,7 +26,7 @@ export default {
         language: 'zh-CN', // 设置语言
         muted: true, // 是否静音
         controlBar: {
-          // progressControl: false,
+          progressControl: false,
           // liveDisplay: false,
           fullscreenToggle: true, // 全屏按钮，默认为true
           pictureInPictureToggle: true, // 画中画按钮，默认为true
@@ -67,7 +67,24 @@ export default {
     },
   },
   mounted() {
+    let self = this
+    const Button = window.videojs.getComponent('Button')
+    const Component = window.videojs.getComponent('Component')
+    class VideoBackButton extends Button {
+      constructor(player, options = {}) {
+        super(player, options)
+        this.controlText('Halfscreen')
+      }
+      buildCSSClass() {
+        return 'vjs-video-big'
+      }
+      handleClick() {
+        self.setBigscreen(this.el_)
+      }
+    }
+    Component.registerComponent('VideoBackButton', VideoBackButton)
     this.player = videojs('znv-video-' + this.vId, this.options)
+    this.player.getChild('controlBar').addChild('VideoBackButton', {}, 4)
     this.setSrc()
   },
   watch: {
@@ -76,6 +93,30 @@ export default {
     },
   },
   methods: {
+    setBigscreen(el) {
+      if (this.isBigScreen) {
+        document
+          .getElementById('znv-video-' + this.vId)
+          .classList.remove('big-center-video')
+        let tempDom = document.getElementById('tempDiv' + this.vId)
+        tempDom.remove()
+        document
+          .getElementById('box-video-' + this.vId)
+          .append(document.getElementById('znv-video-' + this.vId))
+        el.className = 'vjs-video-big'
+      } else {
+        let tempDom = document.createElement('div')
+        tempDom.id = 'tempDiv' + this.vId
+        tempDom.className = 'temp-div'
+        this.$el.appendChild(tempDom)
+        document.body.append(document.getElementById('znv-video-' + this.vId))
+        document
+          .getElementById('znv-video-' + this.vId)
+          .classList.add('big-center-video')
+        el.className = 'vjs-video-small'
+      }
+      this.isBigScreen = !this.isBigScreen
+    },
     setSrc() {
       if (this.type === 'hls') {
         this.initHls()
@@ -173,6 +214,12 @@ export default {
         src: this.src,
         type: 'video/x-flv',
       })
+      this.player.on( 'play', e =>{
+        this.player.tech_.flvPlayer.on('error', e => {
+          console.log(e)
+          console.log('测试城市之眼错误开始重连')
+        })
+      })
     },
     initMp4() {
       this.player.src({
@@ -199,12 +246,27 @@ export default {
           console.log('销毁H265失败')
         }
       })
+    } else {
+      self.dispose()
     }
   }
 }
 </script>
 
 <style lang="scss">
+.big-center-video {
+  position: absolute;
+  left: 27.4%;
+  top: 15%;
+  width: 46.8%;
+  height: 75%;
+  font-size: 20px;
+  z-index: 9;
+  .vjs-tech {
+    pointer-events: none;
+    object-fit: fill;
+  }
+}
 .box-video {
   width: 100%;
   height: 100%;
@@ -219,6 +281,9 @@ export default {
     .vjs-progress-control{
       visibility: hidden;
     }
+  }
+  video{
+    object-fit: fill;
   }
 }
 </style>

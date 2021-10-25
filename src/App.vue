@@ -33,9 +33,9 @@ export default {
       //   cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
       // }
       item: {
-        type: "hls",
+        type: "flv",
         cameraId: '',
-        src: 'https://hls01open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.m3u8',
+        src: 'https://mister-ben.github.io/videojs-flvjs/bbb.flv',
         ws: '',
         hikLayer: '',
         cameraIndexCodes: ""
