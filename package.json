@@ -31,7 +31,7 @@
     "css-loader": "^0.28.7",
     "es6-promise": "^4.2.8",
     "file-loader": "^1.1.4",
-    "node-sass": "^4.5.3",
+    "node-sass": "^7.0.0",
     "sass-loader": "^6.0.6",
     "video.js": "^7.8.2",
     "videojs-flash": "^2.2.1",
