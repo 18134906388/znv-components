@@ -14,6 +14,9 @@
 </template>
 
 <script>
+function isAppleMobileDevice() {
+  return /iphone|ipod|ipad|Macintosh/i.test(navigator.userAgent.toLowerCase());
+}
 
 export default {
   name: 'ZnvVideo',
@@ -26,8 +29,8 @@ export default {
         language: 'zh-CN', // 设置语言
         muted: true, // 是否静音
         controlBar: {
-          progressControl: false,
-          // liveDisplay: false,
+          progressControl: true,
+          liveDisplay: true,
           fullscreenToggle: true, // 全屏按钮，默认为true
           pictureInPictureToggle: true, // 画中画按钮，默认为true
           volumePanel: true, // 声音面板
@@ -119,7 +122,11 @@ export default {
     },
     setSrc() {
       if (this.type === 'hls') {
-        this.initHls()
+        if (isAppleMobileDevice()) {
+          this.initMp4()
+        } else {
+          this.initHls()
+        }
       } else if (this.type === 'rtsp') {
         this.initRtsp()
       } else if (this.type === 'flv') {
@@ -219,6 +226,16 @@ export default {
           console.log(e)
           console.log('测试城市之眼错误开始重连')
         })
+        // flv帧追赶技术 目前2S执行一次 如果延迟超出2S则往前追赶2S
+        this.flvInterval = setInterval(() => {
+          if (this.player.tech_.flvPlayer.buffered.length) {
+            let end = this.player.tech_.flvPlayer.buffered.end(0); // 获取当前buffered值
+            let diff = end - this.player.tech_.flvPlayer.currentTime; // 获取buffered与currentTime的差值
+            if (diff >= 2) { // 如果差值大于等于0.5 手动跳帧 这里可根据自身需求来定
+              this.player.tech_.flvPlayer.currentTime += 2 // 手动跳帧
+            }
+          }
+        }, 2000); //2000毫秒执行一次 
       })
     },
     initMp4() {
@@ -249,6 +266,7 @@ export default {
     } else {
       self.dispose()
     }
+    this.flvInterval && clearInterval(this.flvInterval)
   }
 }
 </script>
