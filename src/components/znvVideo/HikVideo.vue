@@ -3,16 +3,6 @@
 </template>
 
 <script>
-if (!sessionStorage.setItemNew) {
-  var orignalSetItem = sessionStorage.setItem;
-  sessionStorage.setItem = function(key, newValue) {
-    var setItemEvent = new Event("setItemEvent");
-    setItemEvent.newValue = newValue;
-    window.dispatchEvent(setItemEvent);
-    orignalSetItem.apply(this, arguments);
-  };
-  sessionStorage.setItemNew = true
-}
 export default {
   name: "HikVideo",
   props: {
@@ -40,6 +30,11 @@ export default {
       type: Number,
       required: false,
       default: 0
+    },
+    isShow: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
   data() {
@@ -47,7 +42,7 @@ export default {
       oWebControl: null,
       initCount: 0,
       pubKey: "",
-      streamMode: 1,
+      streamMode: 0,
       offsetWidth: 0,
       offsetHeight: 0
     };
@@ -61,29 +56,10 @@ export default {
       self.initPlugin();
     });
     // 监听resize事件，使插件窗口尺寸跟随DIV窗口变化
-    $(window).resize(self.winResize);
-
+    window.addEventListener('resize', self.winResize);
     // 监听滚动条scroll事件，使插件窗口跟随浏览器滚动而移动
     // 不能使用overflow样式，不能使用el-scrollbar组件
     window.addEventListener('scroll', self.winScroll);
-
-    window.addEventListener("setItemEvent", function(e) {
-      if ((e.key = "integration")) {
-        var _this = sessionStorage.getItem("integration");
-        if (_this != e.newValue) {
-          if (e.newValue) {
-            let v = JSON.parse(e.newValue)
-            if (v.msgId === 1024 && v.componentId !== self.vId) {
-              console.log('隐藏' + self.vId)
-              self.oWebControl.JS_HideWnd()
-            } else if (v.msgId === 1025 && v.componentId !== self.vId) {
-              console.log('显示' + self.vId)
-              self.oWebControl.JS_ShowWnd()
-            }
-          }
-        }
-      }
-    });
   },
   watch: {
     width(v) {
@@ -101,7 +77,36 @@ export default {
           self.previewVideo(e);
         });
       });
-    }
+    },
+    '$store.getters.integration': {
+      handler(v) {
+        let self = this;
+        if (v.msgId === 1024 && v.componentId !== self.vId) {
+          console.log('隐藏' + self.vId)
+          self.oWebControl.JS_HideWnd()
+        } else if (v.msgId === 1025 && v.componentId !== self.vId) {
+          console.log('显示' + self.vId)
+          self.oWebControl.JS_ShowWnd()
+        } else if (v.msgId === 'znv-0001' && v.componentId == self.vId) {
+          console.log('移动' + self.vId)
+          self.winResize()
+        }
+      },
+      deep: true,
+    },
+    isShow: {
+      handler(v) {
+        let self = this;
+        if (v) {
+          console.log('显示' + self.vId)
+          self.oWebControl.JS_ShowWnd()
+        } else{
+          console.log('隐藏' + self.vId)
+          self.oWebControl.JS_HideWnd()
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
     winResize() {
@@ -211,7 +216,7 @@ export default {
           self.initCount++;
           if (self.initCount < 3) {
             setTimeout(function() {
-              initPlugin();
+              self.initPlugin();
             }, 3000);
           } else {
             console.log("插件启动失败，请检查插件是否安装！");
@@ -229,15 +234,15 @@ export default {
       let self = this;
       self.getPubKey(function() {
         ////////////////////////////////// 请自行修改以下变量值	////////////////////////////////////
-        var appkey = "23692284"; //综合安防管理平台提供的appkey，必填
-        var secret = self.setEncrypt("CdA29ij0gm1oU2lRV0Ev"); //综合安防管理平台提供的secret，必填
-        var ip = "120.220.57.235"; //综合安防管理平台IP地址，必填
+        var appkey = sysConfig.hik.appkey; //综合安防管理平台提供的appkey，必填
+        var secret = self.setEncrypt(sysConfig.hik.secret); //综合安防管理平台提供的secret，必填
+        var ip = sysConfig.hik.ip; //综合安防管理平台IP地址，必填
         var playMode = 0; //初始播放模式：0-预览，1-回放
-        var port = 18180; //综合安防管理平台端口，若启用HTTPS协议，默认443
+        var port = sysConfig.hik.port; //综合安防管理平台端口，若启用HTTPS协议，默认443
         var snapDir = "D:\\SnapDir"; //抓图存储路径
         var videoDir = "D:\\VideoDir"; //紧急录像或录像剪辑存储路径
         var layout = self.hikLayer; //playMode指定模式的布局
-        var enableHTTPS = 0; //是否启用HTTPS协议与综合安防管理平台交互，这里总是填1
+        var enableHTTPS = sysConfig.hik.enableHTTPS; //是否启用HTTPS协议与综合安防管理平台交互，这里总是填1
         var encryptedFields = "secret"; //加密字段，默认加密领域为secret
         var showToolbar = 1; //是否显示工具栏，0-不显示，非0-显示
         var toolBarButtonIDs = "2049,2050,4100,4098"
@@ -332,24 +337,24 @@ export default {
     cbIntegrationCallBack(oData) {
       console.log(JSON.stringify(oData.responseMsg));
       if (oData.responseMsg.msg.result === 1024) { // 全屏
-        sessionStorage.setItem('integration', JSON.stringify({
+        this.$store.dispatch('view/setIntegration', {
           msgId: 1024,
           componentId: this.vId
-        }))
+        })
         // 全屏切主码流
-        this.streamMode = 0
-        this.stopAllPreview().then(() => {
-          this.cameraIndexCodes.split(",").forEach(e => {
-            this.previewVideo(e);
-          });
-        });
+        // this.streamMode = 0
+        // this.stopAllPreview().then(() => {
+        //   this.cameraIndexCodes.split(",").forEach(e => {
+        //     this.previewVideo(e);
+        //   });
+        // });
       } else if (oData.responseMsg.msg.result === 1025) {
-        sessionStorage.setItem('integration', JSON.stringify({
+        this.$store.dispatch('view/setIntegration', {
           msgId: 1025,
           componentId: this.vId
-        }))
+        })
         // 退出全屏切子码流
-        this.streamMode = 1
+        // this.streamMode = 1
       }
     },
     stopAllPreview() {
@@ -374,9 +379,8 @@ export default {
     }
   },
   beforeDestroy() {
-    $(window).off("resize", this.winResize);
+    window.removeEventListener('resize', this.winResize);
     window.removeEventListener('scroll', this.winScroll);
-    window.removeEventListener("setItemEvent")
     this.stopAllPreview().then(() => {
       this.destoryVideo();
     });

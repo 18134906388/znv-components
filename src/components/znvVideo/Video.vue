@@ -1,7 +1,7 @@
 <template>
   <div class="video">
-    <hik-video :vId="vId" :cameraIndexCodes="cameraIndexCodes" :hikLayer="hikLayer" :width="width" :height="height" v-if="type === 'hik'"></hik-video>
-    <znv-video :cameraId="cameraId" :vId="vId" :src="src" :type="type" :ws="ws" v-else></znv-video>
+    <hik-video :vId="vId" :cameraIndexCodes="cameraIndexCodes" :hikLayer="hikLayer" :width="width" :height="height" v-if="type === 'hik'" :isShow="isShow"></hik-video>
+    <znv-video :vId="vId" :src="src" :type="type" :ws="ws" v-else></znv-video>
   </div>
 </template>
 
@@ -30,11 +30,6 @@ export default {
     }
   },
   props: {
-    cameraId: {
-      type: String,
-      required: false,
-      default: ""
-    },
     src: {
       type: String,
       required: false,
@@ -69,6 +64,11 @@ export default {
       type: Number,
       required: false,
       default: 0
+    },
+    isShow: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
   created() {
