@@ -44,7 +44,8 @@ export default {
       pubKey: "",
       streamMode: 0,
       offsetWidth: 0,
-      offsetHeight: 0
+      offsetHeight: 0,
+      pluginShow: true
     };
   },
   mounted() {
@@ -94,7 +95,7 @@ export default {
       },
       deep: true,
     },
-    isShow: {
+    pluginShow: {
       handler(v) {
         let self = this;
         if (v) {
@@ -104,8 +105,12 @@ export default {
           console.log('隐藏' + self.vId)
           self.oWebControl.JS_HideWnd()
         }
+      }
+    },
+    isShow: {
+      handler(v) {
+        this.pluginShow = v
       },
-      deep: true,
     },
   },
   methods: {
@@ -279,6 +284,7 @@ export default {
             self.cameraIndexCodes.split(",").forEach(e => {
               self.previewVideo(e);
             });
+            self.listenComponent()
           });
       });
     },
@@ -333,6 +339,12 @@ export default {
         })
       });
     },
+    listenComponent() {
+      let self = this
+      self.listenComponentInterval = setInterval(() => {
+        self.pluginShow = !$("#" + self.vId).is(':hidden')
+      }, 1000);
+    },
     // 推送消息
     cbIntegrationCallBack(oData) {
       console.log(JSON.stringify(oData.responseMsg));
@@ -384,6 +396,7 @@ export default {
     this.stopAllPreview().then(() => {
       this.destoryVideo();
     });
+    this.listenComponentInterval && clearInterval(this.listenComponentInterval)
   }
 };
 </script>
