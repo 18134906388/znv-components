@@ -21,16 +21,6 @@ export default {
       required: false,
       default: ""
     },
-    width: {
-      type: Number,
-      required: false,
-      default: 0
-    },
-    height: {
-      type: Number,
-      required: false,
-      default: 0
-    },
     isShow: {
       type: Boolean,
       required: false,
@@ -50,8 +40,8 @@ export default {
   },
   mounted() {
     let self = this;
-    self.offsetWidth = self.width || self.$el.offsetWidth
-    self.offsetHeight = self.height || self.$el.offsetHeight
+    self.offsetWidth = self.$el.offsetWidth * this.$store.getters.resizeValue[0]
+    self.offsetHeight = self.$el.offsetHeight * this.$store.getters.resizeValue[1]
     console.log(self.offsetWidth, self.offsetHeight)
     self.$nextTick(() => {
       self.initPlugin();
@@ -63,19 +53,11 @@ export default {
     window.addEventListener('scroll', self.winScroll);
   },
   watch: {
-    width(v) {
-      let self = this;
-      self.offsetWidth = v || self.$el.offsetWidth
-    },
-    height(v) {
-      let self = this;
-      self.offsetHeight = v || self.$el.offsetHeight
-    },
     cameraIndexCodes(v) {
       let self = this;
       this.stopAllPreview().then(() => {
-        v.split(",").forEach(e => {
-          self.previewVideo(e);
+        v.split(",").forEach((e, index) => {
+          self.previewVideo(e, index + 1);
         });
       });
     },
@@ -111,20 +93,20 @@ export default {
       handler(v) {
         this.pluginShow = v
       },
-    },
+    }
   },
   methods: {
     winResize() {
       let self = this
       if (self.oWebControl != null) {
-        self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight);
+        self.oWebControl.JS_Resize(self.offsetWidth, self.offsetHeight);
         self.setWndCover();
       }
     },
     winScroll() {
       let self = this
       if (self.oWebControl != null) {
-        self.oWebControl.JS_Resize(self.$el.offsetWidth, self.$el.offsetHeight);
+        self.oWebControl.JS_Resize(self.offsetWidth, self.offsetHeight);
         self.setWndCover();
       }
     },
@@ -273,7 +255,8 @@ export default {
               showToolbar: showToolbar, //是否显示工具栏
               toolBarButtonIDs: toolBarButtonIDs,
               showSmart: showSmart, //是否显示智能信息
-              buttonIDs: buttonIDs //自定义工具条按钮
+              buttonIDs: buttonIDs, //自定义工具条按钮
+              reconnectTimes: 3 //重连次数
             })
           })
           .then(function(oData) {
@@ -281,8 +264,8 @@ export default {
               self.offsetWidth,
               self.offsetHeight
             ); // 初始化后resize一次，规避firefox下首次显示窗口后插件窗口未与DIV窗口重合问题
-            self.cameraIndexCodes.split(",").forEach(e => {
-              self.previewVideo(e);
+            self.cameraIndexCodes.split(",").forEach((e, index) => {
+              self.previewVideo(e, index + 1);
             });
             self.listenComponent()
           });
@@ -313,13 +296,13 @@ export default {
       encrypt.setPublicKey(self.pubKey);
       return encrypt.encrypt(value);
     },
-    previewVideo(cameraIndexCode) {
+    previewVideo(cameraIndexCode, wndId) {
       let self = this;
       var cameraIndexCode = cameraIndexCode; //获取输入的监控点编号值，必填
       var streamMode = self.streamMode; //主子码流标识：0-主码流，1-子码流
       var transMode = 1; //传输协议：0-UDP，1-TCP
       var gpuMode = 0; //是否启用GPU硬解，0-不启用，1-启用
-      var wndId = -1; //播放窗口序号（在2x2以上布局下可指定播放窗口）
+      var wndId = wndId; //播放窗口序号（在2x2以上布局下可指定播放窗口）
 
       cameraIndexCode = cameraIndexCode.replace(/(^\s*)/g, "");
       cameraIndexCode = cameraIndexCode.replace(/(\s*$)/g, "");
@@ -356,8 +339,8 @@ export default {
         // 全屏切主码流
         // this.streamMode = 0
         // this.stopAllPreview().then(() => {
-        //   this.cameraIndexCodes.split(",").forEach(e => {
-        //     this.previewVideo(e);
+        //   this.cameraIndexCodes.split(",").forEach((e, index) => {
+        //     this.previewVideo(e, index + 1);
         //   });
         // });
       } else if (oData.responseMsg.msg.result === 1025) {
