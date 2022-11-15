@@ -3,10 +3,7 @@
     <div class="video1">
       <znv-video
         :type="item.type"
-        :cameraId="item.cameraId"
         :src="item.src"
-        :ws="item.ws"
-        :cameraIndexCodes="item.cameraIndexCodes"
       ></znv-video>
     </div>
   </div>
@@ -33,7 +30,7 @@ export default {
       //   cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
       // }
       item: {
-        type: "flv",
+        type: "rtsp",
         cameraId: '',
         src: 'https://mister-ben.github.io/videojs-flvjs/bbb.flv',
         ws: '',

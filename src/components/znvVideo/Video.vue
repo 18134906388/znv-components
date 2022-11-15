@@ -1,7 +1,7 @@
 <template>
   <div class="video">
     <hik-video :vId="vId" :cameraIndexCodes="cameraIndexCodes" :hikLayer="hikLayer" v-if="type === 'hik'" :isShow="isShow"></hik-video>
-    <znv-video :vId="vId" :src="src" :type="type" :ws="ws" v-else></znv-video>
+    <znv-video :vId="vId" :src="src" :type="type" v-else></znv-video>
   </div>
 </template>
 
@@ -38,11 +38,6 @@ export default {
     type: {
       type: String,
       required: true,
-      default: '',
-    },
-    ws: {
-      type: String,
-      required: false,
       default: '',
     },
     cameraIndexCodes: {
