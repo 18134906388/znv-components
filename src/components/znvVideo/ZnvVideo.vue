@@ -259,7 +259,7 @@ export default {
     destoryRtspStream() {
       if (this.type === "rtsp" && this.streamMark) {
         $.ajax({
-          url: "apis/rtsp/closeStream?streamMark=" + this.streamMark,
+          url: "apis/rtsp/closeStream?streamMark=" + encodeURIComponent(this.streamMark),
           type: "GET",
           headers: {
             Authorization: "12CBD9B708D887A41AFAB97DAC46AAC6"
