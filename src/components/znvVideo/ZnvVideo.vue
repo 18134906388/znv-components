@@ -164,9 +164,8 @@ export default {
           success: function(res) {
             let data = res.data[0];
             self.streamMark = data.streamMark;
-            self.player.src({
+            let opt = {
               src: data.rtspUrl,
-              type: "video/rtsp",
               socket: data.wsUrl,
               redirectNativeMediaErrors: true,
               bufferDuration: 10,
@@ -174,6 +173,10 @@ export default {
               isH265: true,
               isH265Url: data.wsUrl,
               streamMark: data.streamMark
+            }
+            self.player.src({
+              src: JSON.stringify(opt),
+              type: "video/rtsp"
             });
           },
           error: function() {
