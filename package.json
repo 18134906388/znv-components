@@ -12,9 +12,7 @@
   },
   "dependencies": {
     "jquery": "^3.5.1",
-    "supper-tools": "^1.0.2",
-    "vue": "^2.5.11",
-    "webworkify": "^1.5.0"
+    "vue": "^2.5.11"
   },
   "browserslist": [
     "> 1%",
@@ -29,7 +27,6 @@
     "babel-preset-stage-3": "^6.24.1",
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.7",
-    "es6-promise": "^4.2.8",
     "file-loader": "^1.1.4",
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",

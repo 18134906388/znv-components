@@ -15,7 +15,6 @@
 // flv点播测试地址https://mister-ben.github.io/videojs-flvjs/bbb.flv
 // flv直播测试地址https://flvopen.ys7.com:9188/openlive/376d82d20a6c479b829222acca274b61.hd.flv
 import ZnvVideo from "./components/znvVideo/Video";
-import st from "supper-tools";
 export default {
   name: "app",
   components: { ZnvVideo },
@@ -23,17 +22,13 @@ export default {
     return {
       // item: {
       //   type: "hik",
-      //   cameraId: '61000000001310000004',
-      //   src: 'rtsp://10.45.154.187:555/live/32011500001110000014-1/0',
-      //   ws: 'ws://10.45.154.187:8060/ws',
+      //   src: '61000000001310000004',
       //   hikLayer: '2X2',
       //   cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
       // }
       item: {
-        type: "rtsp",
-        cameraId: '',
-        src: 'https://mister-ben.github.io/videojs-flvjs/bbb.flv',
-        ws: '',
+        type: "hls",
+        src: 'https://yunqivedio.alicdn.com/2017yq/v2/0x0/96d79d3f5400514a6883869399708e11/96d79d3f5400514a6883869399708e11.m3u8',
         hikLayer: '',
         cameraIndexCodes: ""
       }

@@ -1,28 +1,34 @@
 <template>
   <div class="video">
     <hik-video :vId="vId" :cameraIndexCodes="cameraIndexCodes" :hikLayer="hikLayer" v-if="type === 'hik'" :isShow="isShow"></hik-video>
-    <znv-video :vId="vId" :src="src" :type="type" v-else></znv-video>
+    <hls-video :vId="vId" :src="src" v-else-if="type === 'hls'"></hls-video>
+    <flv-video :vId="vId" :src="src" v-else-if="type === 'flv'"></flv-video>
+    <vcms-video :vId="vId" :src="src" v-else-if="type === 'vcms'"></vcms-video>
   </div>
 </template>
 
 <script>
 /**
- * 流媒体播放器2.0
+ * 流媒体播放器3.0
  * @module 组件存放位置
- * @desc 同时支持rtsp、flv和hls三种流媒体，相比1.0去掉的rtmp的支持，同时使用video.js统一UI和API,代码更加精简，更容易集成以及使用。支持hik（海康平台对接视频）
+ * @desc 同时支持vcms rtsp、flv、hls、海康四种流媒体
  * @author 李志伟0049003294
- * @date 2021年05月20日10:22:43
+ * @date 2023年05月29日10:22:43
  * @param {String} [src]    - 流媒体链接 必传
  * @param {String} [type]    - 流媒体类型 必传
  */
 
-import ZnvVideo from './ZnvVideo'
+import HlsVideo from './HlsVideo'
+import FlvVideo from './FlvVideo'
+import VcmsVideo from './VcmsVideo'
 import HikVideo from './HikVideo'
 export default {
   name: 'Video',
   components: {
-    ZnvVideo,
-    HikVideo
+    HikVideo,
+    HlsVideo,
+    FlvVideo,
+    VcmsVideo
   },
   data() {
     return {
