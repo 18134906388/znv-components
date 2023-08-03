@@ -4,6 +4,8 @@
     <hls-video :vId="vId" :src="src" v-else-if="type === 'hls'"></hls-video>
     <flv-video :vId="vId" :src="src" v-else-if="type === 'flv'"></flv-video>
     <vcms-video :vId="vId" :src="src" v-else-if="type === 'vcms'"></vcms-video>
+    <h265-video :vId="vId" :src="src" v-else-if="type === 'h265'"></h265-video>
+    <mp4-video :vId="vId" :src="src" v-else="type === 'mp4'"></mp4-video>
   </div>
 </template>
 
@@ -22,13 +24,17 @@ import HlsVideo from './HlsVideo'
 import FlvVideo from './FlvVideo'
 import VcmsVideo from './VcmsVideo'
 import HikVideo from './HikVideo'
+import H265Video from './H265Video'
+import Mp4Video from './Mp4Video'
 export default {
   name: 'Video',
   components: {
     HikVideo,
     HlsVideo,
     FlvVideo,
-    VcmsVideo
+    VcmsVideo,
+    H265Video,
+    Mp4Video
   },
   data() {
     return {
@@ -85,7 +91,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .video{
   height: 100%;
 }

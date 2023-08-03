@@ -384,7 +384,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .playWnd {
   width: 100%;
   height: 100%;

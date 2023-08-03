@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    <div class="video1">
-      <znv-video
-        :type="item.type"
-        :src="item.src"
-      ></znv-video>
+    <div class="video1" v-for="item in items">
+      <znv-video :type="item.type" :src="item.src"></znv-video>
     </div>
   </div>
 </template>
@@ -20,31 +17,19 @@ export default {
   components: { ZnvVideo },
   data() {
     return {
-      // item: {
-      //   type: "hik",
-      //   src: '61000000001310000004',
-      //   hikLayer: '2X2',
-      //   cameraIndexCodes: "37035100001310666505,37035100001310666505,37035100001310666505,37035100001310666505"
-      // }
-      item: {
-        type: "hls",
-        src: 'https://yunqivedio.alicdn.com/2017yq/v2/0x0/96d79d3f5400514a6883869399708e11/96d79d3f5400514a6883869399708e11.m3u8',
-        hikLayer: '',
-        cameraIndexCodes: ""
-      }
+      items: [
+        {
+          type: "vcms",
+          src: "14020000001310000041"
+        }
+      ]
     };
   },
-  mounted() {
-    // let queryObj = st.url2json(location.href)
-    // queryObj.src && (this.item.src = unescape(queryObj.src))
-    // queryObj.type && (this.item.type = queryObj.type)
-    // queryObj.playerType && (this.item.playerType = queryObj.playerType)
-    // queryObj.ws && (this.item.ws = unescape(queryObj.ws))
-  }
+  mounted() {}
 };
 </script>
 
-<style lang="scss">
+<style>
 html,
 body {
   margin: 0;
@@ -58,9 +43,10 @@ body {
 #app {
   width: 100%;
   height: 100%;
-  .video1 {
-    width: 500px;
-    height: 600px;
-  }
+  display: flex;
+}
+.video1 {
+  width: 500px;
+  height: 600px;
 }
 </style>

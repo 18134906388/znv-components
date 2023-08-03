@@ -6,60 +6,61 @@
 
 <script>
 export default {
-  name: "FlvVideo",
+  name: 'FlvVideo',
   data() {
-    return {};
+    return {}
   },
   props: {
     vId: {
       type: String,
       required: true,
-      default: ""
+      default: ''
     },
     src: {
       type: String,
       required: true,
-      default: ""
+      default: ''
     }
   },
   watch: {
     src() {
-      this.dispose();
-      this.initVideo();
+      this.dispose()
+      this.initVideo()
     }
   },
   mounted() {
-    debugger
-    this.initVideo();
+    this.initVideo()
   },
   methods: {
     initVideo() {
       if (flvjs.isSupported()) {
-        var videoElement = document.getElementById(this.vId);
+        var videoElement = document.getElementById(this.vId)
         var flvPlayer = flvjs.createPlayer({
-          type: "flv",
+          type: 'flv',
           url: this.src
-        });
-        flvPlayer.attachMediaElement(videoElement);
-        flvPlayer.load();
-        flvPlayer.play();
+        })
+        flvPlayer.attachMediaElement(videoElement)
+        flvPlayer.load()
+        flvPlayer.play()
         this.flvPlayer = flvPlayer
       }
     },
     dispose() {
-      this.flvPlayer.pause();
-      this.flvPlayer.unload();
-      this.flvPlayer.detachMediaElement();
-      this.flvPlayer.destroy();
-      this.flvPlayer = null;
+      if (this.flvPlayer) {
+        this.flvPlayer.pause()
+        this.flvPlayer.unload()
+        this.flvPlayer.detachMediaElement()
+        this.flvPlayer.destroy()
+        this.flvPlayer = null
+      }
     }
   },
   beforeDestroy() {
-    this.dispose();
+    this.dispose()
   }
-};
+}
 </script>
 
-<style lang="scss">
-@import url(./viedo.scss);
+<style>
+@import url(./viedo.css);
 </style>

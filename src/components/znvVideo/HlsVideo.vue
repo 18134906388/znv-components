@@ -6,89 +6,99 @@
 
 <script>
 function isAppleMobileDevice() {
-  return /iphone|ipod|ipad|Macintosh/i.test(navigator.userAgent.toLowerCase());
+  return /iphone|ipod|ipad|Macintosh/i.test(navigator.userAgent.toLowerCase())
 }
 
 export default {
-  name: "HlsVideo",
+  name: 'HlsVideo',
   data() {
-    return {};
+    return {}
   },
   props: {
     vId: {
       type: String,
       required: true,
-      default: ""
+      default: ''
     },
     src: {
       type: String,
       required: true,
-      default: ""
+      default: ''
     }
   },
   watch: {
     src() {
-      this.dispose();
-      this.initVideo();
+      if (isAppleMobileDevice()) {
+        this.initIosVideo()
+      } else {
+        this.dispose()
+        this.initVideo()
+      }
     }
   },
   mounted() {
-    this.initVideo();
+    if (isAppleMobileDevice()) {
+      this.initIosVideo()
+    } else {
+      this.initVideo()
+    }
   },
   methods: {
+    initIosVideo() {
+      var video = document.getElementById(this.vId)
+      video.src = this.src
+    },
     initVideo() {
-      if (Hls.isSupported()) {
-        var video = document.getElementById(this.vId);
-        var hls = new Hls();
+      if (Hls.isSupported() && this.src) {
+        var video = document.getElementById(this.vId)
+        var hls = new Hls()
         // bind them together
-        hls.attachMedia(video);
+        hls.attachMedia(video)
         // MEDIA_ATTACHED event is fired by hls object once MediaSource is ready
-        hls.on(Hls.Events.MEDIA_ATTACHED, function() {
-          console.log("video and hls.js are now bound together !");
-        });
-        hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
-          console.log(
-            "manifest loaded, found " + data.levels.length + " quality level"
-          );
-        });
-        hls.loadSource(this.src);
-        // bind them together
-        hls.attachMedia(video);
-        video.play();
-        hls.on(Hls.Events.ERROR, function(event, data) {
+        hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+          console.log('video and hls.js are now bound together !')
+          hls.loadSource(this.src)
+        })
+        hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+          console.log('manifest loaded, found ' + data.levels.length + ' quality level')
+        })
+        hls.on(Hls.Events.ERROR, function (event, data) {
           if (data.fatal) {
             switch (data.type) {
               case Hls.ErrorTypes.MEDIA_ERROR:
-                console.log("fatal media error encountered, try to recover");
-                hls.recoverMediaError();
-                break;
+                console.log('fatal media error encountered, try to recover')
+                hls.recoverMediaError()
+                break
               case Hls.ErrorTypes.NETWORK_ERROR:
-                console.error("fatal network error encountered", data);
+                console.error('fatal network error encountered', data)
                 // All retries and media options have been exhausted.
                 // Immediately trying to restart loading could cause loop loading.
                 // Consider modifying loading policies to best fit your asset and network
                 // conditions (manifestLoadPolicy, playlistLoadPolicy, fragLoadPolicy).
-                break;
+                break
               default:
                 // cannot recover
-                hls.destroy();
-                break;
+                hls.destroy()
+                break
             }
           }
-        });
-        this.hls = hls;
+        })
+        this.hls = hls
       }
     },
     dispose() {
-      this.hls.destroy();
+      if (this.hls) {
+        this.hls.destroy()
+        this.hls = null
+      }
     }
   },
   beforeDestroy() {
-    this.dispose();
+    this.dispose()
   }
-};
+}
 </script>
 
-<style lang="scss">
-@import url(./viedo.scss);
+<style>
+@import url(./viedo.css);
 </style>
