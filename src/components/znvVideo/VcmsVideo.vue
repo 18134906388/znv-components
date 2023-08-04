@@ -90,7 +90,6 @@ export default {
         };
         this.streamMark = data.streamMark;
         let opt = {
-          src: data.rtspUrl,
           socket: data.wsUrl,
           redirectNativeMediaErrors: true,
           bufferDuration: 10,
